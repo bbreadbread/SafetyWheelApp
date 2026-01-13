@@ -6,17 +6,23 @@
       xmlns:local="clr-namespace:Safety_Wheel.Pages.Student.TestTypes"
       mc:Ignorable="d" 
       d:DesignHeight="430" d:DesignWidth="800"
-      Title="StudTestTypeSecond">
+      Title="StudTestTypeSecond"
+      HorizontalAlignment="Center"
+      VerticalAlignment="Center">
 
-    <Grid>
+    <Grid  Style="{StaticResource MainGrid}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
 
-                <RowDefinition Height="6*"/>
+                <RowDefinition Height="7*"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Text="Текст вопроса*:"/>
+            <Grid Grid.Column="0" MaxWidth="1000">
+                <TextBlock Style="{StaticResource MainText}" Foreground="{StaticResource Black}">
+                    <Run Text="{Binding TextQuestion}"/>
+                </TextBlock>
+            </Grid>
 
             <WrapPanel x:Name="GeneratedAnswersPanel" Grid.Row="1" Orientation="Horizontal">
 
