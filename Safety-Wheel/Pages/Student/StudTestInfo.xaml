@@ -4,43 +4,42 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Safety_Wheel.Pages.Student"
-      mc:Ignorable="d"
-      d:DesignHeight="1080" d:DesignWidth="1920"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
       Title="StudTestInfo">
 
     <Grid Style="{StaticResource MainGrid}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="200"/>
-            <RowDefinition Height="100"/>
-            <RowDefinition Height="100"/>
-            <RowDefinition Height="100"/>
-            <RowDefinition Height="150"/>
+            <RowDefinition Height="90"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Style="{StaticResource MainTitle}" Text="Ознакомьтесь с информацией ниже" Grid.Row="0" Foreground="{StaticResource MainBlue}"/>
-
+        <TextBlock Text="Ознакомьтесь с информацией ниже" Grid.Row="0"/>
+        
         <StackPanel Grid.Row="1" Style="{DynamicResource ButtonOptionsStackPanel}">
-            <TextBlock Style="{StaticResource MainText}">
-                <Run Text="ТИП:"/>
-                <Run Text="{Binding TestTypeName}"/>
-            </TextBlock>
+            <TextBlock Text="ТИП:"/>
+            <TextBlock Text=""/>
         </StackPanel>
 
         <StackPanel Grid.Row="2" Style="{DynamicResource ButtonOptionsStackPanel}">
-            <TextBlock Style="{StaticResource MainText}">
-                <Run Text="ТЕСТ:"/>
-                <Run Text="{Binding TestName}"/>
-            </TextBlock>
+            <TextBlock Text="ТЕСТ:"/>
+            <TextBlock Text=""/>
         </StackPanel>
 
         <StackPanel Grid.Row="3" Style="{DynamicResource ButtonOptionsStackPanel}">
-            <TextBlock Style="{StaticResource MainText}">
-                <Run Text="ВРЕМЯ НА ВЫПОЛНЕНИЕ:"/>
-                <Run Text="{Binding TimeLimit}"/>
-            </TextBlock>
-            <TextBlock/>
+            <TextBlock Text="ВРЕМЯ НА ВЫПОЛНЕНИЕ:"/>
+            <TextBlock Text=""/>
         </StackPanel>
 
-        <Button Style="{StaticResource HomeButton}" Content="Начать" Grid.Row="5" Click="ButtonStartTest_Click"/>
+        <StackPanel Grid.Row="4" Style="{DynamicResource ButtonOptionsStackPanel}">
+            <TextBlock Text="УЧАСТНИК:"/>
+            <TextBlock Text=""/>
+        </StackPanel>
+
+        <Button Content="Начать" Grid.Row="5" Click="ButtonStartTest_Click"/>
     </Grid>
 </Page>

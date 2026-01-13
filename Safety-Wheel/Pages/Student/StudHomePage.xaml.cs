@@ -1,6 +1,4 @@
-﻿using Safety_Wheel.Models;
-using Safety_Wheel.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,14 +20,10 @@ namespace Safety_Wheel.Pages.Student
     /// </summary>
     public partial class StudHomePage : Page
     {
-        public static string NameDiscipline;
-        StudentService StudentService = new();
-
-        public StudHomePage(int StudentID)
+        string NameDiscipline;
+        public StudHomePage()
         {
             InitializeComponent();
-            if (Application.Current.MainWindow is MainWindow mw)
-                mw.HeaderUserNameTextBlock.Text = StudentService.GetCurrentStudent(StudentID).Name ?? string.Empty;
         }
 
         private void ButtonGoPdd_Click(object sender, RoutedEventArgs e)

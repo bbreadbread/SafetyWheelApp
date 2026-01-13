@@ -5,62 +5,33 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Safety_Wheel.Pages.Student"
       mc:Ignorable="d" 
-      d:DesignHeight="1080" d:DesignWidth="1920"
+      d:DesignHeight="450" d:DesignWidth="800"
       Title="MainPage">
 
     <Grid Style="{StaticResource MainGrid}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="200"/>
-            <RowDefinition Height="100"/>
-            <RowDefinition Height="100"/>
-            <RowDefinition Height="130"/>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250"/>
-            <ColumnDefinition Width="700"/>
+            <ColumnDefinition Width="500"/>
         </Grid.ColumnDefinitions>
         
-        <TextBlock Style="{StaticResource MainTitle}" Grid.Row="0" Grid.ColumnSpan="2" Text="Авторизация" Foreground="{StaticResource MainBlue}"/>
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Авторизация"/>
 
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Логин"/>
+        <TextBox Grid.Row="1" Grid.Column="1"/>
+
+        <TextBlock  Grid.Row="2" Grid.Column="0" Text="Пароль"/>
+        <TextBox  Grid.Row="2" Grid.Column="1"/>
         
-        
-        <TextBlock Style="{StaticResource AuthTitle}" Grid.Row="1" Grid.Column="0" Text="Логин"/>
-        <Border Grid.Row="1" Grid.Column="1" CornerRadius="10" BorderThickness="5" Background="White" BorderBrush="{StaticResource Gray}"  Margin="0 5">
-            <Border.Effect>
-                <DropShadowEffect ShadowDepth="0" BlurRadius="3" Opacity="0.3" Color="Black"/>
-            </Border.Effect>
-            <TextBox x:Name="TbLogin" BorderThickness="0" Background="Transparent" VerticalAlignment="Center" FontWeight="Medium" FontSize="30">
-                <TextBox.Template>
-                    <ControlTemplate TargetType="TextBox">
-                        <Border x:Name="border" Background="Transparent">
-                            <ScrollViewer x:Name="PART_ContentHost" Margin="8,0"/>
-                        </Border>
-                    </ControlTemplate>
-                </TextBox.Template>
-            </TextBox>
-        </Border>
-
-
-        <TextBlock Style="{StaticResource AuthTitle}" Grid.Row="2" Grid.Column="0" Text="Пароль"/>
-        <Border  Grid.Row="2" Grid.Column="1" CornerRadius="10" BorderThickness="5" Background="White" BorderBrush="{StaticResource Gray}" Margin="0 5">
-            <Border.Effect>
-                <DropShadowEffect ShadowDepth="0" BlurRadius="3" Opacity="0.3" Color="Black"/>
-            </Border.Effect>
-            <TextBox x:Name="TbPassword" BorderThickness="0" Background="Transparent" VerticalAlignment="Center" FontWeight="Medium"  FontSize="30">
-                <TextBox.Template>
-                    <ControlTemplate TargetType="TextBox">
-                        <Border x:Name="border" Background="Transparent">
-                            <ScrollViewer x:Name="PART_ContentHost" Margin="8,0"/>
-                        </Border>
-                    </ControlTemplate>
-                </TextBox.Template>
-            </TextBox>
-        </Border>
-
-        <Button Style="{StaticResource HomeButton}" x:Name="BtnEnter" Grid.Row="3" Grid.ColumnSpan="2" Content="Войти" Click="ButtonAuth_Click"/>
-        <TextBlock Style="{StaticResource Hint}" Grid.Row="4" Grid.ColumnSpan="2" Text="Логин и пароль получается и уточняется у преподавателя"/>
+        <Button Grid.Row="3" Grid.ColumnSpan="2" Content="Войти" Click="ButtonAuth_Click"/>
+        <TextBlock Grid.Row="4" Grid.ColumnSpan="2" Text="Логин и пароль получается и уточняется у преподавателя"/>
 
     </Grid>
 </Page>
