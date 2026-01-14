@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Safety_Wheel.Models;
 using Safety_Wheel.Services;
+using System.Windows.Media.Animation;
 
 namespace Safety_Wheel.Pages.Teacher
 {
@@ -24,6 +25,10 @@ namespace Safety_Wheel.Pages.Teacher
     /// </summary>
     public partial class TeacherMainPage : Page
     {
+        public Frame InnerFrame => this.FrameTeacher;
+
+        public static Frame GlobalInnerFrame;
+
         public enum ViewTypes
         {
             Open,
@@ -44,6 +49,7 @@ namespace Safety_Wheel.Pages.Teacher
         {
             InitializeComponent();
             DataContext = new MainViewModel(menuItemsCount);
+            GlobalInnerFrame = FrameTeacher;
         }
         private void DatesMenuControl_OnItemInvoked(object sender, HamburgerMenuItemInvokedEventArgs e)
         {
@@ -72,5 +78,18 @@ namespace Safety_Wheel.Pages.Teacher
                 }
             }
         }
+
+        private void DatesMenuControl_ItemInvoked(object sender, MahApps.Metro.Controls.HamburgerMenuItemInvokedEventArgs e)
+        {
+            if (DatesMenuControl.IsPaneOpen)
+            {
+                var anim = new DoubleAnimation(48, TimeSpan.FromMilliseconds(250));
+                DatesMenuControl.BeginAnimation(MahApps.Metro.Controls.HamburgerMenu.CompactPaneLengthProperty, anim);
+                DatesMenuControl.IsPaneOpen = false;
+                DatesMenuControl.SetCurrentValue(HamburgerMenu.SelectedIndexProperty, -1);
+            }
+            
+        }
+
     }
 }

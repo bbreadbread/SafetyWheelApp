@@ -91,7 +91,7 @@ namespace Safety_Wheel.Services
             }
         }
 
-        public Test GetTestById(int testId)
+        public Test GetTestById(int? testId)
         {
             return Tests
                 .Where(t => t.Id == testId)

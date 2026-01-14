@@ -36,7 +36,12 @@ namespace Safety_Wheel.Services
 
         public void GetAll()
         {
+            var query = _db.TestTypes.ToList();
 
+            foreach (var testType in query)
+            {
+                TestTypes.Add(testType);
+            }
         }
         public TestType GetTypeById(int? type)
         {

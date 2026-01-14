@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Safety_Wheel.Services
 {
@@ -36,7 +37,7 @@ namespace Safety_Wheel.Services
 
         public int Commit() => _db.SaveChanges();
 
-        public void GetAll(decimal? studentId = null, decimal? testId = null)
+        public void GetAll(decimal? studentId = null, decimal? testId = null, DateTime? date = null)
         {
             IQueryable<Attempt> query = _db.Attempts
                 .Include(a => a.Students)
@@ -44,8 +45,12 @@ namespace Safety_Wheel.Services
 
             if (studentId != null)
                 query = query.Where(a => a.StudentsId == studentId);
+
             if (testId != null)
                 query = query.Where(a => a.TestId == testId);
+
+            if (date.HasValue)
+                query = query.Where(a => a.StartedAt.Value.Date == date.Value.Date);
 
             var attempts = query.ToList();
             Attempts.Clear();
@@ -55,7 +60,15 @@ namespace Safety_Wheel.Services
                 Attempts.Add(attempt);
             }
         }
-
+        public List<DateTime> GetUniqueAttemptDates(int studentId)
+        {
+            return _db.Attempts
+                .Where(a => a.StudentsId == studentId && a.StartedAt.HasValue)
+                .Select(a => a.StartedAt.Value.Date)
+                .Distinct()
+                .OrderByDescending(d => d)
+                .ToList();
+        }
 
         public Attempt GetLastByType(int studentId, int testId, int typeId)
         {

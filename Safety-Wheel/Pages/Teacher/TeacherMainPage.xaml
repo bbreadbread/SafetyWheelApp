@@ -14,16 +14,10 @@
         <viewModels:MainViewModel />
     </Page.DataContext>-->
 
-    <Border Background="{StaticResource MainBlue}">
-        <Grid HorizontalAlignment="Left">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Grid.Resources>
-
+    <Border Background="{StaticResource White}">
+        <DockPanel>
+            <DockPanel.Resources>
                 <core:SelectedItemToContentConverter x:Key="SelectedItemToContentConverter" />
-
                 <!--  this is the template for the items (options too)  -->
                 <DataTemplate x:Key="MenuItemTemplate" DataType="{x:Type viewModels:MenuItemViewModel}">
                     <Grid x:Name="RootGrid"
@@ -51,15 +45,12 @@
                 </DataTemplate>
 
                 <!--  these are the templates for the view models  -->
-                <DataTemplate DataType="{x:Type viewModels:TeacherSelectedStudViewModel}">
-                    <views:TeacherSelectedStudPage DataContext="{Binding}" />
-                </DataTemplate>
-
-                <DataTemplate DataType="{x:Type viewModels:TeacherViewingTestsViewModel}">
+                <DataTemplate DataType="{x:Type viewModels:TeacherSelectedStudViewModel}"/>
+                <DataTemplate DataType="{x:Type viewModels:SelectedDateViewModel}">
                     <views:TeacherViewingTestsPage DataContext="{Binding}" />
                 </DataTemplate>
 
-            </Grid.Resources>
+            </DockPanel.Resources>
 
             <mah:HamburgerMenu x:Name="PeopleMenuControl"
                                DisplayMode="CompactInline"
@@ -68,37 +59,64 @@
                                ItemsSource="{Binding MenuItems}"
                                SelectedItem="{Binding SelectedStudent, Mode=TwoWay}"
                                OptionsItemsSource="{Binding MenuOptionItems}"
-                               SelectedIndex="1"
+                               SelectedIndex="0"
                                HamburgerVisibility="Collapsed"
                                Grid.Column="0"
-                               Style="{StaticResource PeoplesMenu}">
+                               Style="{StaticResource PeoplesMenu}" 
+                               DockPanel.Dock="Left">
 
             </mah:HamburgerMenu>
 
             <mah:HamburgerMenu x:Name="DatesMenuControl"
-                                   DisplayMode="CompactInline"
-                                   IsPaneOpen="False"
-                                   ItemTemplate="{StaticResource MenuItemTemplate}"
-                                   ItemsSource="{Binding MenuDatesItems}"
-                                   OptionsItemTemplate="{StaticResource MenuItemTemplate}"
-                                   SelectedIndex="0"
-                                   HamburgerVisibility="Collapsed"
-                                   Grid.Column="1"
-                               Style="{StaticResource DatesMenu}">
-                <!--  select the ViewModel of the selected item (options item)  -->
+                               ItemInvoked="DatesMenuControl_ItemInvoked"
+                               DisplayMode="CompactInline"
+                               IsPaneOpen="False"
+                               ItemTemplate="{StaticResource MenuItemTemplate}"
+                               ItemsSource="{Binding MenuDatesItems}"
+                               SelectedItem="{Binding SelectedDate, Mode=TwoWay}"
+                               SelectedIndex="0"
+                               HamburgerVisibility="Collapsed"
+                               Grid.Column="1"
+                               Style="{StaticResource DatesMenu}"
+                               DockPanel.Dock="Left">
+
+                <!-- Контент для выбранной даты -->
                 <mah:HamburgerMenu.Content>
                     <MultiBinding Converter="{StaticResource SelectedItemToContentConverter}">
-                        <Binding FallbackValue="{x:Null}"
-                                     Mode="OneWay"
-                                     Path="SelectedItem"
-                                     RelativeSource="{RelativeSource Self}" />
-                        <Binding FallbackValue="{x:Null}"
-                                     Mode="OneWay"
-                                     Path="SelectedOptionsItem"
-                                     RelativeSource="{RelativeSource Self}" />
+                        <Binding Mode="OneWay"
+                     Path="SelectedItem"
+                     RelativeSource="{RelativeSource Self}" />
                     </MultiBinding>
                 </mah:HamburgerMenu.Content>
+
+                <mah:HamburgerMenu.ContentTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="48"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <Border Grid.Row="0" Background="#FF444444">
+                                <TextBlock HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="24"
+                           Foreground="White"
+                           Text="{Binding DateTitle}" />
+                            </Border>
+
+                            <ContentControl Grid.Row="1"
+                            Content="{Binding}"
+                            Focusable="False" />
+                        </Grid>
+                    </DataTemplate>
+                </mah:HamburgerMenu.ContentTemplate>
             </mah:HamburgerMenu>
-        </Grid>
+
+            <Frame x:Name="FrameTeacher" 
+                   Grid.Column="2"
+                   NavigationUIVisibility="Hidden"
+                    DockPanel.Dock="Left"/>
+        </DockPanel>
     </Border>
 </Page>

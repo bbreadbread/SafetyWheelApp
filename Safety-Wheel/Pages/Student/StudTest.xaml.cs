@@ -114,52 +114,56 @@ namespace Safety_Wheel.Pages.Student
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        public StudTest(Test currentTest, int? seconds = null, int? typeTest = null)
-        {   
+        public StudTest(Test currentTest, int? seconds = null, int? typeTest = null, bool? iamisteacher = false, Attempt atReady = null)
+        {
             _test = currentTest;
             _canClosed = false;
             _isTestActivated = true;
             _timeLimitSeconds = seconds;
+            InitializeComponent();
 
-            _attempt = new Attempt
+            if (iamisteacher == false)
             {
-                StudentsId = CurrentUser.Id,
-                TestId = _test.Id,
-                StartedAt = DateTime.Now,
-                //FinishedAt
-                //Score
-                Status = "В работе",
-                TestType = typeTest
-            };
+                _attempt = new Attempt
+                {
+                    StudentsId = CurrentUser.Id,
+                    TestId = _test.Id,
+                    StartedAt = DateTime.Now,
+                    //FinishedAt
+                    //Score
+                    Status = "В работе",
+                    TestType = typeTest
+                };
+
+                if (_attempt.TestType == 1)
+                    CommentsImage.Visibility = Visibility.Visible;
+                else if (_attempt.TestType == 3 || _attempt.TestType == 2)
+                    CommentsImage.Visibility = Visibility.Collapsed;
+                InitializeTimer();
+            }
+            else
+            {
+                _attempt = atReady;
+            }
 
             TypeTest = testTypeService.GetTypeById(_attempt.TestType).Name;
-
 
             NameTest = _test.Name;
             SubjectName = _test.Subject.Name;
             _startTime = DateTime.Now;
 
-            InitializeComponent();
-
-            if (_attempt.TestType == 1)
-                CommentsImage.Visibility = Visibility.Visible;
-            else if (_attempt.TestType == 3 || _attempt.TestType == 2)
-                CommentsImage.Visibility = Visibility.Collapsed;
-
-            
-
             DataContext = this;
-
-            
 
             //questionService = new QuestionService(_test.Id);
             _questions = studentAnswerService.GetQoestiosForCurrentTest(_test.Id);
+            
 
-            InitializeTimer();
             LoadQuestionNumbers();
+            if (iamisteacher == true)CompleteTest();
             LoadCurrentQuestion();
 
             StudTestTypeOne.QuestionAnswered += closed => _currentQuestionClosed = closed;
+            
         }
         private void InitializeTimer()
         {

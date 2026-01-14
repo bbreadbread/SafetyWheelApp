@@ -10,21 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Converters\**" />
-    <Compile Remove="Pages\Teacher\**" />
-    <Compile Remove="ViewModels\**" />
-    <EmbeddedResource Remove="Converters\**" />
-    <EmbeddedResource Remove="Pages\Teacher\**" />
-    <EmbeddedResource Remove="ViewModels\**" />
-    <None Remove="Converters\**" />
-    <None Remove="Pages\Teacher\**" />
-    <None Remove="ViewModels\**" />
-    <Page Remove="Converters\**" />
-    <Page Remove="Pages\Teacher\**" />
-    <Page Remove="ViewModels\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Images\back_logo.png" />
     <None Remove="Images\comments_icon.png" />
     <None Remove="Images\exam_icon.png" />

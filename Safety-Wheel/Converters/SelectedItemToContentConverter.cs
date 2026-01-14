@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MahApps.Metro.Controls;
+using Safety_Wheel.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -12,11 +14,17 @@ namespace Safety_Wheel.Converters
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            // first value is selected menu item, second value is selected option item
-            if (values != null && values.Length > 1)
+            System.Diagnostics.Debug.WriteLine(
+                $"Converter вызван. values.Length={values?.Length}, 0-й={values?[0]?.GetType().Name}");
+
+            if (values?[0] is MenuItemViewModel vm)   // ← проверяем наш класс
             {
-                return values[0] ?? values[1];
+                System.Diagnostics.Debug.WriteLine(
+                    $"  возвращаю Tag = {vm.Tag?.GetType().Name}");
+                return vm.Tag;                        // ← это и есть SelectedDateViewModel
             }
+
+            System.Diagnostics.Debug.WriteLine("  возвращаю null");
             return null;
         }
 

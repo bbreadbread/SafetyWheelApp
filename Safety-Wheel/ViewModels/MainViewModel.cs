@@ -6,24 +6,30 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows;
 
 namespace Safety_Wheel.ViewModels
 {
     public class MainViewModel : ObservableObject
     {
         private ObservableCollection<MenuItemViewModel> _menuItems;
-        private ObservableCollection<MenuItemViewModel> _menuOptionItems;
         private ObservableCollection<MenuItemViewModel> _menuDatesItems;
         private StudentService _studentService = new();
         private AttemptService _attemptService = new();
 
         private MenuItemViewModel _selectedStudent;
+        private MenuItemViewModel _selectedDate;
         private Student _currentStudent;
+        private DateTime? _selectedDateValue;
+        private AttemptDetailsViewModel _currentAttemptDetails;
+        public AttemptDetailsViewModel CurrentAttemptDetails
+        {
+            get => _currentAttemptDetails;
+            set => SetProperty(ref _currentAttemptDetails, value);
+        }
+
 
         public MainViewModel(int count)
         {
@@ -38,8 +44,7 @@ namespace Safety_Wheel.ViewModels
 
             foreach (var st in _studentService.Students)
             {
-                _attemptService.GetAll(st.Id);
-                var view = new TeacherSelectedStudViewModel(this)
+                var view = new MenuItemViewModel(this)
                 {
                     Icon = new TextBlock
                     {
@@ -50,26 +55,49 @@ namespace Safety_Wheel.ViewModels
                         HorizontalAlignment = HorizontalAlignment.Center,
                         VerticalAlignment = VerticalAlignment.Center
                     },
-                    Label = $"{st.Attempts}",
+                    Label = $"Попыток: {st.Attempts?.Count ?? 0}",
                     ToolTip = $"Студент: {st.Name}",
                     Tag = st
                 };
 
                 MenuItems.Add(view);
             }
-
-            MenuOptionItems = new ObservableCollection<MenuItemViewModel>
-            {
-                new TeacherSelectedStudViewModel(this)
-                {
-                    Icon = new PackIconMaterial() { Kind = PackIconMaterialKind.Cog },
-                    Label = "Добавление",
-                    ToolTip = "The App settings"
-                }
-            };
         }
 
-        
+        private void LoadStudentDates(Student student)
+        {
+            if (student == null) return;
+
+            MenuDatesItems.Clear();
+
+            List<DateTime> list = _attemptService.GetUniqueAttemptDates(student.Id);
+
+            foreach (var date in list)
+            {
+                var dateVm = new SelectedDateViewModel(date, student);  
+
+                var menuItem = new MenuItemViewModel(this)
+                {
+                    Icon = new TextBlock
+                    {
+                        Text = $"{date:dd.MM}",
+                        FontSize = 20,
+                        FontWeight = FontWeights.Bold,
+                        Foreground = Brushes.White,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center
+                    },
+                    Label = $"Попыток: {dateVm.Attempts.Count}", 
+                    ToolTip = $"Дата: {date:dd.MM.yyyy}\nПопыток: {dateVm.Attempts.Count}",
+                    Tag = dateVm         
+                    
+                };
+                MenuDatesItems.Add(menuItem);
+            }
+
+            SelectedDate = null;
+        }
+
         public ObservableCollection<MenuItemViewModel> MenuItems
         {
             get => _menuItems;
@@ -82,11 +110,6 @@ namespace Safety_Wheel.ViewModels
             set => SetProperty(ref _menuDatesItems, value);
         }
 
-        public ObservableCollection<MenuItemViewModel> MenuOptionItems
-        {
-            get => _menuOptionItems;
-            set => SetProperty(ref _menuOptionItems, value);
-        }
         public MenuItemViewModel SelectedStudent
         {
             get => _selectedStudent;
@@ -94,8 +117,22 @@ namespace Safety_Wheel.ViewModels
             {
                 if (SetProperty(ref _selectedStudent, value) && value?.Tag is Student student)
                 {
-                    LoadStudentAttempts(student);
+                    LoadStudentDates(student);
                     CurrentStudent = student;
+                }
+            }
+        }
+        public MenuItemViewModel SelectedDate
+        {
+            get => _selectedDate;
+            set
+            {
+                if (SetProperty(ref _selectedDate, value))
+                {
+                    if (value?.Tag is SelectedDateViewModel dateViewModel)
+                    {
+                        SelectedDateValue = dateViewModel.Date;
+                    }
                 }
             }
         }
@@ -106,32 +143,11 @@ namespace Safety_Wheel.ViewModels
             set => SetProperty(ref _currentStudent, value);
         }
 
-        private void LoadStudentAttempts(Student student)
+        public DateTime? SelectedDateValue
         {
-            _attemptService.GetAll(student.Id);
-
-            MenuDatesItems.Clear();
-
-            foreach (var at in _attemptService.Attempts)
-            {
-                var attemptItem = new MenuItemViewModel(this)
-                {
-                    Icon = new TextBlock
-                    {
-                        Text = $"{at.StartedAt:dd.MM.yyyy}",
-                        FontSize = 20,
-                        FontWeight = FontWeights.Bold,
-                        Foreground = Brushes.White,
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        VerticalAlignment = VerticalAlignment.Center
-                    },
-                    Label = $"{at.StartedAt:HH:mm}",
-                    ToolTip = $"Попытка от {at.StartedAt}",
-                    Tag = at
-                };
-
-                MenuDatesItems.Add(attemptItem);
-            }
+            get => _selectedDateValue;
+            set => SetProperty(ref _selectedDateValue, value);
         }
+
     }
 }
