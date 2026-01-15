@@ -195,6 +195,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Notifications.Wpf" Version="0.1.1" />
+    <PackageReference Include="ScottPlot.WPF" Version="5.1.57" />
     <PackageReference Include="WPFCustomMessageBox" Version="1.0.7" />
   </ItemGroup>
 

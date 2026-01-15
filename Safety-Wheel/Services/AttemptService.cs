@@ -101,5 +101,14 @@ namespace Safety_Wheel.Services
                 Commit();
             }
         }
+
+        public List<Attempt> GetAttemptsByTest(int testId)
+        {
+                return Attempts
+                    .Where(a => a.TestId == testId)
+                    .OrderBy(a => a.StartedAt)
+                    .ToList();
+           
+        }
     }
 }

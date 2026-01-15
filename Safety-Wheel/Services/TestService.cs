@@ -35,7 +35,7 @@ namespace Safety_Wheel.Services
 
         public int Commit() => _db.SaveChanges();
 
-        public void GetAll(decimal? subjectId = null, decimal? teacherId = null)
+        public void GetAll(int? subjectId = null, int? teacherId = null)
         {
             IQueryable<Test> query = _db.Tests
                 .Include(t => t.Subject)

@@ -14,14 +14,10 @@ namespace Safety_Wheel.Converters
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            System.Diagnostics.Debug.WriteLine(
-                $"Converter вызван. values.Length={values?.Length}, 0-й={values?[0]?.GetType().Name}");
 
-            if (values?[0] is MenuItemViewModel vm)   // ← проверяем наш класс
+            if (values?[0] is MenuItemViewModel vm)
             {
-                System.Diagnostics.Debug.WriteLine(
-                    $"  возвращаю Tag = {vm.Tag?.GetType().Name}");
-                return vm.Tag;                        // ← это и есть SelectedDateViewModel
+                return vm.Tag; 
             }
 
             System.Diagnostics.Debug.WriteLine("  возвращаю null");

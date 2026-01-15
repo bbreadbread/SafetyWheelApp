@@ -48,66 +48,9 @@ namespace Safety_Wheel.Pages.Student
         private int _correctCount;
         private int _uncorrectCount;
         private int _tmptyCount;
+        private string _statusTest;
 
-        public int CorrectCount
-        {
-            get => _correctCount;
-            set
-            {
-                _correctCount = value;
-                OnPropertyChanged(nameof(CorrectCount));
-            }
-        }
-        public int UncorrectCount
-        {
-            get => _uncorrectCount;
-            set
-            {
-                _uncorrectCount = value;
-                OnPropertyChanged(nameof(UncorrectCount));
-            }
-        }
-
-        public int EmptyCount
-        {
-            get => _tmptyCount;
-            set
-            {
-                _tmptyCount = value;
-                OnPropertyChanged(nameof(EmptyCount));
-            }
-        }
-
-        public string TimeLimit
-        {
-            get => _timeLimit;
-            set
-            {
-                _timeLimit = value;
-                OnPropertyChanged(nameof(TimeLimit));
-            }
-        }
-                
-        public string CommentForQuestion
-        {
-            get => _commentForQuestion;
-            set
-            {
-                _commentForQuestion = value;
-                OnPropertyChanged(nameof(CommentForQuestion));
-            }
-        }
-                
-        public string TypeTest
-        {
-            get => _typeTest;
-            set
-            {
-                _typeTest = value;
-                OnPropertyChanged(nameof(TypeTest));
-            }
-        }
-
+        
         public static DispatcherTimer _timer;
         private DateTime _startTime;
         private int? _timeLimitSeconds;
@@ -120,10 +63,12 @@ namespace Safety_Wheel.Pages.Student
             _canClosed = false;
             _isTestActivated = true;
             _timeLimitSeconds = seconds;
-            InitializeComponent();
+
 
             if (iamisteacher == false)
             {
+                StatusTest = "Прохождение теста: ";
+                InitializeTimer();
                 _attempt = new Attempt
                 {
                     StudentsId = CurrentUser.Id,
@@ -134,15 +79,10 @@ namespace Safety_Wheel.Pages.Student
                     Status = "В работе",
                     TestType = typeTest
                 };
-
-                if (_attempt.TestType == 1)
-                    CommentsImage.Visibility = Visibility.Visible;
-                else if (_attempt.TestType == 3 || _attempt.TestType == 2)
-                    CommentsImage.Visibility = Visibility.Collapsed;
-                InitializeTimer();
             }
             else
             {
+                StatusTest = "Результаты теста: ";
                 _attempt = atReady;
             }
 
@@ -156,14 +96,25 @@ namespace Safety_Wheel.Pages.Student
 
             //questionService = new QuestionService(_test.Id);
             _questions = studentAnswerService.GetQoestiosForCurrentTest(_test.Id);
-            
 
+            InitializeComponent();
             LoadQuestionNumbers();
-            if (iamisteacher == true)CompleteTest();
+            if (iamisteacher == true)
+            {
+                CompleteTest();
+                ButtonConfirm.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                if (_attempt.TestType == 1)
+                    CommentsImage.Visibility = Visibility.Visible;
+                else if (_attempt.TestType == 3 || _attempt.TestType == 2)
+                    CommentsImage.Visibility = Visibility.Collapsed;
+            }
             LoadCurrentQuestion();
 
             StudTestTypeOne.QuestionAnswered += closed => _currentQuestionClosed = closed;
-            
+
         }
         private void InitializeTimer()
         {
@@ -514,6 +465,73 @@ namespace Safety_Wheel.Pages.Student
                 toolTip.DataContext = image.DataContext;
 
             toolTip.IsOpen = !toolTip.IsOpen;
+        }public int CorrectCount
+        {
+            get => _correctCount;
+            set
+            {
+                _correctCount = value;
+                OnPropertyChanged(nameof(CorrectCount));
+            }
+        }
+        public int UncorrectCount
+        {
+            get => _uncorrectCount;
+            set
+            {
+                _uncorrectCount = value;
+                OnPropertyChanged(nameof(UncorrectCount));
+            }
+        }
+
+        public int EmptyCount
+        {
+            get => _tmptyCount;
+            set
+            {
+                _tmptyCount = value;
+                OnPropertyChanged(nameof(EmptyCount));
+            }
+        }
+
+        public string TimeLimit
+        {
+            get => _timeLimit;
+            set
+            {
+                _timeLimit = value;
+                OnPropertyChanged(nameof(TimeLimit));
+            }
+        }
+                
+        public string CommentForQuestion
+        {
+            get => _commentForQuestion;
+            set
+            {
+                _commentForQuestion = value;
+                OnPropertyChanged(nameof(CommentForQuestion));
+            }
+        }
+                
+        public string TypeTest
+        {
+            get => _typeTest;
+            set
+            {
+                _typeTest = value;
+                OnPropertyChanged(nameof(TypeTest));
+            }
+        }
+
+        public string StatusTest
+        {
+            get => _statusTest;
+            set
+            {
+                _statusTest = value;
+                OnPropertyChanged(nameof(StatusTest));
+            }
         }
     }
 }

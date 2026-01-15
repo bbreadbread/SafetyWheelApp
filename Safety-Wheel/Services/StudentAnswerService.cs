@@ -201,60 +201,14 @@ namespace Safety_Wheel.Services
                   .Where(q => q.TestId == currentTest)
                   .OrderBy(q => q.Number)
                   .ToList();
+        }
 
-
-
-            //Image image = new Image
-            //{
-            //    Source = new BitmapImage(new Uri(imagePath, UriKind.RelativeOrAbsolute)),
-            //    Tag = tagValue,
-            //    Width = 230,
-            //    Height = 230,
-            //    Stretch = Stretch.Uniform,
-            //    RenderTransformOrigin = new Point(0.5, 0.5),
-            //    Cursor = Cursors.Hand
-            //};
-
-            //ScaleTransform scaleTransform = new ScaleTransform(1.0, 1.0);
-            //image.RenderTransform = scaleTransform;
-
-            //Image magnifier = new Image
-            //{
-            //    Source = new BitmapImage(new Uri(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images/magnifier_icon.png"), UriKind.RelativeOrAbsolute)),
-            //    Width = 32,
-            //    Height = 32,
-            //    Cursor = Cursors.Hand,
-            //    HorizontalAlignment = HorizontalAlignment.Right,
-            //    VerticalAlignment = VerticalAlignment.Top,
-            //    Margin = new Thickness(0, 5, 5, 0),
-            //    Opacity = 0.8
-            //};
-
-            //Canvas overlay = new Canvas
-            //{
-            //    Width = 240,
-            //    Height = 240,
-            //    Background = Brushes.Transparent
-            //};
-            //Canvas.SetLeft(image, 0);
-            //Canvas.SetTop(image, 0);
-            //Canvas.SetLeft(magnifier, 230 - 32 - 5);
-            //Canvas.SetTop(magnifier, 5);
-
-            //overlay.Children.Add(image);
-            //overlay.Children.Add(magnifier);
-
-            //Border border = new Border
-            //{
-            //    Child = overlay,
-            //    BorderBrush = Brushes.LightGray,
-            //    BorderThickness = new Thickness(1),
-            //    Margin = new Thickness(15),
-            //    Padding = new Thickness(15),
-            //    CornerRadius = new CornerRadius(5),
-            //    Background = Brushes.White,
-            //    Cursor = Cursors.Hand
-            //};
+        public List<StudentAnswer> GetAnswersByQuestion(int questionId)
+        {
+                return StudentAnswers
+                    .Where(sa => sa.QuestionId == questionId)
+                    .ToList();
+            
         }
     }
 }

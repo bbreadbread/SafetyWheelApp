@@ -19,6 +19,8 @@
             <DockPanel.Resources>
                 <core:SelectedItemToContentConverter x:Key="SelectedItemToContentConverter" />
                 <!--  this is the template for the items (options too)  -->
+                <core:MenuTypeToSingleVisibilityConverter x:Key="MenuTypeToSingleVisibilityConverter" />
+                <core:MenuTypeToMultiVisibilityConverter x:Key="MenuTypeToMultiVisibilityConverter" />
                 <DataTemplate x:Key="MenuItemTemplate" DataType="{x:Type viewModels:MenuItemViewModel}">
                     <Grid x:Name="RootGrid"
                           Height="48"
@@ -46,12 +48,24 @@
 
                 <!--  these are the templates for the view models  -->
                 <DataTemplate DataType="{x:Type viewModels:TeacherSelectedStudViewModel}"/>
-                <DataTemplate DataType="{x:Type viewModels:SelectedDateViewModel}">
-                    <views:TeacherViewingTestsPage DataContext="{Binding}" />
-                </DataTemplate>
+                <DataTemplate DataType="{x:Type viewModels:SelectedDateViewModel}"/>
+                <DataTemplate DataType="{x:Type viewModels:CreateTestsViewModel}"/>
+                <DataTemplate DataType="{x:Type viewModels:StatisticsViewModel}"/>
 
             </DockPanel.Resources>
 
+            <mah:HamburgerMenu x:Name="MainMenuControl"
+                               DisplayMode="CompactInline"
+                               IsPaneOpen="False"
+                               ItemTemplate="{StaticResource MenuItemTemplate}"
+                               ItemsSource="{Binding MainMenuItems}"
+                               SelectedItem="{Binding SelectedMainMenuItem, Mode=TwoWay}"
+                               SelectedIndex="0"
+                               HamburgerVisibility="Visible"
+                               Style="{StaticResource MainMenuStyle}" 
+                               DockPanel.Dock="Left">
+            </mah:HamburgerMenu>
+            
             <mah:HamburgerMenu x:Name="PeopleMenuControl"
                                DisplayMode="CompactInline"
                                IsPaneOpen="False"
@@ -64,7 +78,13 @@
                                Grid.Column="0"
                                Style="{StaticResource PeoplesMenu}" 
                                DockPanel.Dock="Left">
-
+                <mah:HamburgerMenu.Visibility>
+                    <MultiBinding Converter="{StaticResource MenuTypeToMultiVisibilityConverter}" 
+                                  ConverterParameter="Students">
+                        <Binding Path="SelectedMainMenuItem.Tag"/>
+                        <Binding Path="MenuItems.Count"/>
+                    </MultiBinding>
+                </mah:HamburgerMenu.Visibility>
             </mah:HamburgerMenu>
 
             <mah:HamburgerMenu x:Name="DatesMenuControl"
@@ -79,44 +99,43 @@
                                Grid.Column="1"
                                Style="{StaticResource DatesMenu}"
                                DockPanel.Dock="Left">
-
-                <!-- Контент для выбранной даты -->
-                <mah:HamburgerMenu.Content>
-                    <MultiBinding Converter="{StaticResource SelectedItemToContentConverter}">
-                        <Binding Mode="OneWay"
-                     Path="SelectedItem"
-                     RelativeSource="{RelativeSource Self}" />
+                <mah:HamburgerMenu.Visibility>
+                    <MultiBinding Converter="{StaticResource MenuTypeToMultiVisibilityConverter}" 
+                                  ConverterParameter="Dates">
+                        <Binding Path="SelectedMainMenuItem.Tag"/>
+                        <Binding Path="MenuDatesItems.Count"/>
                     </MultiBinding>
-                </mah:HamburgerMenu.Content>
-
-                <mah:HamburgerMenu.ContentTemplate>
+                </mah:HamburgerMenu.Visibility>
+            </mah:HamburgerMenu>
+            <StackPanel Orientation="Horizontal">
+                 <mah:HamburgerMenu x:Name="AttemptsMenuControl"
+                               DisplayMode="Overlay"
+                               HamburgerWidth="48"
+                               IsPaneOpen="True"
+                               ItemTemplate="{StaticResource MenuItemTemplate}"
+                               ItemsSource="{Binding MenuAttemptsItems}"
+                               SelectedItem="{Binding SelectedAttempt, Mode=TwoWay}"
+                               SelectedIndex="0"
+                               Style="{StaticResource AttemptsMenu}"
+                                    DockPanel.Dock="Left">
+                    <mah:HamburgerMenu.Visibility>
+                        <MultiBinding Converter="{StaticResource MenuTypeToMultiVisibilityConverter}" 
+                                  ConverterParameter="Attempts">
+                            <Binding Path="SelectedMainMenuItem.Tag"/>
+                            <Binding Path="MenuAttemptsItems.Count"/>
+                        </MultiBinding>
+                    </mah:HamburgerMenu.Visibility>
+                     
+                    <mah:HamburgerMenu.ContentTemplate>
                     <DataTemplate>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="48"/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
-
-                            <Border Grid.Row="0" Background="#FF444444">
-                                <TextBlock HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           FontSize="24"
-                           Foreground="White"
-                           Text="{Binding DateTitle}" />
-                            </Border>
-
-                            <ContentControl Grid.Row="1"
-                            Content="{Binding}"
-                            Focusable="False" />
-                        </Grid>
+                        <Grid/>
                     </DataTemplate>
                 </mah:HamburgerMenu.ContentTemplate>
             </mah:HamburgerMenu>
 
             <Frame x:Name="FrameTeacher" 
-                   Grid.Column="2"
-                   NavigationUIVisibility="Hidden"
-                    DockPanel.Dock="Left"/>
+                   NavigationUIVisibility="Hidden"/>
+            </StackPanel>           
         </DockPanel>
     </Border>
 </Page>
