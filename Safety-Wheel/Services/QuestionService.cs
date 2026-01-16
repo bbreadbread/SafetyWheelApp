@@ -19,18 +19,20 @@ namespace Safety_Wheel.Services
             GetAll();
         }
 
-        public void Add(Question question)
+        public Question Add(Question question, Test test, int i)
         {
             var _question = new Question
             {
-                TestId = question.TestId,
-                Number = question.Number,
+                TestId = test.Id,
+                Number = i,
                 TestQuest = question.TestQuest,
                 PicturePath = question.PicturePath,
-                Comments = question.Comments
+                Comments = question.Comments,
+                QuestionType = question.QuestionType
             };
             _db.Add(_question);
             Commit();
+            return _question;
         }
 
         public int Commit() => _db.SaveChanges();
@@ -78,6 +80,28 @@ namespace Safety_Wheel.Services
                   .Where(q => q.TestId == currentTest)
                   .OrderBy(q => q.Number)
                   .ToList();
+        }
+
+        public void DeleteByTest(int testId)
+        {
+
+            var questions = _db.Questions
+                .Where(q => q.TestId == testId)
+                .ToList();
+
+            if (!questions.Any())
+                return;
+
+            var questionIds = questions.Select(q => q.Id).ToList();
+
+            var options = _db.Options
+                .Where(o => questionIds.Contains(o.QuestionId))
+                .ToList();
+
+            _db.Options.RemoveRange(options);
+            _db.Questions.RemoveRange(questions);
+
+            _db.SaveChanges();
         }
 
     }

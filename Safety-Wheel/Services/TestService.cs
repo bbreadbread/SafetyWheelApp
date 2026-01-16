@@ -14,22 +14,24 @@ namespace Safety_Wheel.Services
         private readonly SafetyWheelContext _db = BaseDbService.Instance.Context;
         public ObservableCollection<Test> Tests { get; set; } = new();
 
-        public TestService()
+        public TestService(bool? empty = null)
         {
-            GetAll();
+            if (empty != true) GetAll();
         }
 
-        public void Add(Test test)
+        public void Add(Test test, int i)
         {
             var _test = new Test
             {
                 Name = test.Name,
                 SubjectId = test.SubjectId,
-                TeacherId = test.TeacherId,
-                PenaltyMax = test.PenaltyMax,
-                MaxScore = test.MaxScore
+                TeacherId = CurrentUser.Id,
+                PenaltyMax = i,
+                MaxScore = i,
+                DateOfCreating = DateTime.Now,
             };
             _db.Add(_test);
+            Tests.Add(_test);
             Commit();
         }
 
@@ -96,6 +98,13 @@ namespace Safety_Wheel.Services
             return Tests
                 .Where(t => t.Id == testId)
                 .First();
+        }
+
+        public Test GetLastTest()
+        {
+            return Tests
+                 .OrderByDescending(a => a.DateOfCreating)
+                      .FirstOrDefault();
         }
 
         public void GetTestsBySubjectName(string subjectName)

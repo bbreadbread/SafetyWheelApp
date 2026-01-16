@@ -132,6 +132,9 @@ namespace Safety_Wheel.Pages.Student
             {
                 _timer.Stop();
                 CompleteTest();
+
+                _attempt.Score = HowManyCorrect();
+                _attemptService.Update(_attempt);
                 _attempt.Status = "Завершен (Принудительный выход)";
             }
             UpdateTimeDisplay();
@@ -179,6 +182,9 @@ namespace Safety_Wheel.Pages.Student
                            MessageBoxButton.OK,
                            MessageBoxImage.Warning);
 
+
+            _attempt.Score = HowManyCorrect();
+            _attemptService.Update(_attempt);
             _attempt.Status = "Завершен (время истекло)";
             CompleteTest();
         }
@@ -190,8 +196,6 @@ namespace Safety_Wheel.Pages.Student
             EmptyCount = 0;
 
             _attempt.FinishedAt = DateTime.Now;
-            _attempt.Score = HowManyCorrect();
-            _attemptService.Update(_attempt);
 
             _canClosed = true;
             ButtonConfirm.Content = "Завершить тест";

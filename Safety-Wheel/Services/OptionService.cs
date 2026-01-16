@@ -19,11 +19,12 @@ namespace Safety_Wheel.Services
             GetAll();
         }
 
-        public void Add(Option option)
+        public void Add(Option option, int j)
         {
             var _option = new Option
             {
                 QuestionId = option.QuestionId,
+                Number = j,
                 TextAnswer = option.TextAnswer,
                 IsCorrect = option.IsCorrect,
                 Question = option.Question
@@ -84,5 +85,14 @@ namespace Safety_Wheel.Services
                 Commit();
             }
         }
+
+        public List<Option> GetOptionsByQuestion(int questionId)
+        {
+            return Options
+                .Where(o => o.QuestionId == questionId)
+                .OrderBy(o => o.Number)
+                .ToList();
+        }
+
     }
 }

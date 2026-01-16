@@ -6,7 +6,7 @@
     <SolidColorBrush x:Key="Gray" Color="#D9D9D9"/>
     <SolidColorBrush x:Key="White" Color="#FFFFFFFF"/>
     <SolidColorBrush x:Key="Black" Color="#FF000000"/>
-    <SolidColorBrush x:Key="LightBlue" Color="#FFE3EEFF"/>
+    <SolidColorBrush x:Key="LightBlue" Color="#F3F8FF"/>
     <SolidColorBrush x:Key="HoverBlue" Color="#FF052D6E"/>
 
     <SolidColorBrush x:Key="Green" Color="#10A91A"/>

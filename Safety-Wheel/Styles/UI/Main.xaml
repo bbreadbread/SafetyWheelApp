@@ -11,7 +11,31 @@
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="Width" Value="1500"/>
     </Style>
-
+    <!--////Редактирование и создание тестов////-->
+    <Style TargetType="UserControl" x:Key="CreateEditTest">
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Width" Value="920"/>
+    </Style>
+    <Style TargetType="ComboBox" BasedOn="{StaticResource MahApps.Styles.ComboBox}" x:Key="CBStyle">
+        <Setter Property="Width" Value="900"/>
+        <Setter Property="Height" Value="66"/>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="Background" Value="LightBlue"/>
+        <Setter Property="mah:TextBoxHelper.Watermark" Value="Выберите дисциплину"/>
+    </Style>
+    <Style TargetType="TextBox" BasedOn="{StaticResource MahApps.Styles.TextBox}" x:Key="TBoxStyle">
+        <Setter Property="Width" Value="900"/>
+        <Setter Property="Height" Value="66"/>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="Background" Value="LightBlue"/>
+        <Setter Property="mah:TextBoxHelper.Watermark" Value="Название теста"/>
+    </Style>
+    <Style TargetType="CheckBox" x:Key="CheckBStyle">
+        <Setter Property="AllowDrop" Value="False"/>
+        <Setter Property="Width" Value="30"/>
+        <Setter Property="Height" Value="30"/>
+    </Style>
+    <!--////////-->
     <Style TargetType="TextBlock" x:Key="MainText">
         <Setter Property="FontSize" Value="24"/>
         <Setter Property="FontWeight" Value="Bold"/>

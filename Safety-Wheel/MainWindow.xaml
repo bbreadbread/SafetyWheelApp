@@ -70,6 +70,8 @@
         <Frame x:Name="MainFrame" 
                Grid.Row="1"
                NavigationUIVisibility="Hidden"
+               HorizontalAlignment="Stretch"
+           VerticalAlignment="Stretch"
                Source="Pages/Student/AuthorizationPage.xaml"/>
     </Grid>
 </Window>

@@ -25,43 +25,34 @@ namespace Safety_Wheel.Pages.Teacher
 
         public void LoadStatisticsForStudent(Models.Student student)
         {
-            bool isOverall = student == null;
+            bool isReady = student == null;
 
-            StudentTitle.Text = isOverall
+            StudentTitle.Text = isReady
                 ? "Общая статистика по всем студентам"
                 : $"Статистика студента: {student.Name}";
 
             _testService.GetAll(null, CurrentUser.Id);
 
             var testStats = new List<TestStats>();            
-            var overallTime = new List<OverallTimeData>();
+            var AllTime = new List<OverallTimeData>();
 
             foreach (var test in _testService.Tests)
             {
-                var stats = isOverall
+                var stats = isReady
                     ? GetTestStatsOverall(test)
                     : GetTestStats(test, student);
 
                 testStats.Add(stats);
 
-                if (stats.HasData)
-                {
-                    overallTime.Add(new OverallTimeData
-                    {
-                        TestName = $"{test.Subject.Name} {test.Name}",
-                        AverageDuration = stats.AverageDuration
-                    });
-                }
 
-
-                overallTime.Add(new OverallTimeData
+                AllTime.Add(new OverallTimeData
                 {
-                    TestName =  $"{test.Subject.Name} {test.Name}",
+                    TestName =  $"{test.Name}",
                     AverageDuration = stats.AverageDuration
                 });
             }
             TestsItemsControl.ItemsSource = testStats;
-            DrawOverallTimeChart(overallTime);
+            DrawOverallTimeChart(AllTime);
         }
 
         private TestStats GetTestStatsOverall(Test test)
@@ -84,7 +75,6 @@ namespace Safety_Wheel.Pages.Teacher
 
             var durations = attempts
                 .Select(a => (a.FinishedAt.Value - a.StartedAt.Value).TotalMinutes)
-                .Where(m => m > 0 && m <= 25)
                 .ToList();
 
             if (!durations.Any())
@@ -142,7 +132,6 @@ namespace Safety_Wheel.Pages.Teacher
 
             var durations = attempts
                 .Select(a => (a.FinishedAt.Value - a.StartedAt.Value).TotalMinutes)
-                .Where(m => m > 0 && m <= 25)
                 .ToList();
 
             if (!durations.Any())
@@ -181,13 +170,25 @@ namespace Safety_Wheel.Pages.Teacher
             var labels = data.Select(d => d.TestName).ToArray();
 
             OverallTimePlot.Plot.Add.Bars(x, y);
+
             OverallTimePlot.Plot.Axes.Bottom.SetTicks(x, labels);
             OverallTimePlot.Plot.Axes.Bottom.TickLabelStyle.Rotation = 45;
+
+            double maxY = y.Max();
+            double yPadding = Math.Max(1, maxY * 0.1);
+
+            OverallTimePlot.Plot.Axes.SetLimits(
+                -0.5,
+                x.Length - 0.5,
+                0,
+                maxY + yPadding
+            );
 
             OverallTimePlot.Plot.Title("Среднее время выполнения тестов");
             OverallTimePlot.Plot.YLabel("Минуты");
 
             OverallTimePlot.Refresh();
+
         }
 
         private void PerformancePlot_Loaded(object sender, RoutedEventArgs e)
@@ -219,7 +220,16 @@ namespace Safety_Wheel.Pages.Teacher
             plot.Plot.Title("Динамика успеваемости");
             plot.Plot.XLabel("Номер вопроса");
             plot.Plot.YLabel("Процент правильных (%)");
-            plot.Plot.Axes.SetLimitsY(0, 100);
+
+            double minX = stats.QuestionNumbers.Min() - 0.5;
+            double maxX = stats.QuestionNumbers.Max() + 0.5;
+
+            plot.Plot.Axes.SetLimits(
+                minX,
+                maxX,
+                0,
+                100
+            );
 
             plot.Refresh();
         }

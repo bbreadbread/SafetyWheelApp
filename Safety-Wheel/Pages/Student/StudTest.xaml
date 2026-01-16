@@ -41,10 +41,12 @@
             
             <StackPanel Style="{DynamicResource ButtonOptionsStackPanel}" Grid.ColumnSpan="2">
             <TextBlock Style="{StaticResource MainText}">
-                <Run Text="{Binding StatusTest}"/>
+                <Run Text="Прохождение теста:"/>
                 <Run Text="{Binding SubjectName}"/>
                 <Run Text=" / "/>
                 <Run Text="{Binding NameTest}"/>
+                
+                
                 <Run Text=" / "/>
                 <Run Text="{Binding TypeTest}"/>
             </TextBlock>            
@@ -73,7 +75,7 @@
                Margin="5"/>
         </Grid>
 
-        <WrapPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="InfoResult">
+        <WrapPanel Grid.Column="4" Grid.ColumnSpan="2" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="InfoResult" Visibility="Collapsed">
             <TextBlock Style="{StaticResource Hint2}">
                 <Run Text="Правильных ответов:"/>
                 <Run Text="{Binding CorrectCount}"/>

@@ -12,6 +12,7 @@ public class Test : ObservableObject
     private int? _teacherId;
     private int? _penaltyMax;
     private int? _maxScore;
+    private DateTime? _dateOfCreating;
     private ObservableCollection<Question> _questions = new();
     private Subject? _subject;
     private Teacher? _teacher;
@@ -51,7 +52,11 @@ public class Test : ObservableObject
         get => _maxScore;
         set => SetProperty(ref _maxScore, value);
     }
-
+    public DateTime? DateOfCreating
+    {
+        get => _dateOfCreating;
+        set => SetProperty(ref _dateOfCreating, value);
+    }
     public virtual ObservableCollection<Question> Questions
     {
         get => _questions;

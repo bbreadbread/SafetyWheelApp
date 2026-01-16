@@ -6,7 +6,7 @@
       xmlns:viewModels="clr-namespace:Safety_Wheel.ViewModels"      
       xmlns:core="clr-namespace:Safety_Wheel.Converters"
       xmlns:views="clr-namespace:Safety_Wheel.Pages.Teacher"
-      
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       Title="HamburgerMenuPage">
     <!--xmlns:localViews="clr-namespace:Safety_Wheel.Views"
 
@@ -15,8 +15,8 @@
     </Page.DataContext>-->
 
     <Border Background="{StaticResource White}">
-        <DockPanel>
-            <DockPanel.Resources>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+            <StackPanel.Resources>
                 <core:SelectedItemToContentConverter x:Key="SelectedItemToContentConverter" />
                 <!--  this is the template for the items (options too)  -->
                 <core:MenuTypeToSingleVisibilityConverter x:Key="MenuTypeToSingleVisibilityConverter" />
@@ -52,7 +52,7 @@
                 <DataTemplate DataType="{x:Type viewModels:CreateTestsViewModel}"/>
                 <DataTemplate DataType="{x:Type viewModels:StatisticsViewModel}"/>
 
-            </DockPanel.Resources>
+            </StackPanel.Resources>
 
             <mah:HamburgerMenu x:Name="MainMenuControl"
                                DisplayMode="CompactInline"
@@ -65,7 +65,7 @@
                                Style="{StaticResource MainMenuStyle}" 
                                DockPanel.Dock="Left">
             </mah:HamburgerMenu>
-            
+
             <mah:HamburgerMenu x:Name="PeopleMenuControl"
                                DisplayMode="CompactInline"
                                IsPaneOpen="False"
@@ -78,13 +78,6 @@
                                Grid.Column="0"
                                Style="{StaticResource PeoplesMenu}" 
                                DockPanel.Dock="Left">
-                <mah:HamburgerMenu.Visibility>
-                    <MultiBinding Converter="{StaticResource MenuTypeToMultiVisibilityConverter}" 
-                                  ConverterParameter="Students">
-                        <Binding Path="SelectedMainMenuItem.Tag"/>
-                        <Binding Path="MenuItems.Count"/>
-                    </MultiBinding>
-                </mah:HamburgerMenu.Visibility>
             </mah:HamburgerMenu>
 
             <mah:HamburgerMenu x:Name="DatesMenuControl"
@@ -108,7 +101,7 @@
                 </mah:HamburgerMenu.Visibility>
             </mah:HamburgerMenu>
             <StackPanel Orientation="Horizontal">
-                 <mah:HamburgerMenu x:Name="AttemptsMenuControl"
+                <mah:HamburgerMenu x:Name="AttemptsMenuControl"
                                DisplayMode="Overlay"
                                HamburgerWidth="48"
                                IsPaneOpen="True"
@@ -125,17 +118,22 @@
                             <Binding Path="MenuAttemptsItems.Count"/>
                         </MultiBinding>
                     </mah:HamburgerMenu.Visibility>
-                     
-                    <mah:HamburgerMenu.ContentTemplate>
-                    <DataTemplate>
-                        <Grid/>
-                    </DataTemplate>
-                </mah:HamburgerMenu.ContentTemplate>
-            </mah:HamburgerMenu>
 
-            <Frame x:Name="FrameTeacher" 
-                   NavigationUIVisibility="Hidden"/>
+                    <mah:HamburgerMenu.ContentTemplate>
+                        <DataTemplate>
+                            <Grid/>
+                        </DataTemplate>
+                    </mah:HamburgerMenu.ContentTemplate>
+                </mah:HamburgerMenu>
+
+                <StackPanel HorizontalAlignment="Center">
+                    <Frame x:Name="FrameTeacher"
+               NavigationUIVisibility="Hidden"
+                           HorizontalAlignment="Stretch"
+               VerticalAlignment="Stretch"/>
+                </StackPanel>
+
             </StackPanel>           
-        </DockPanel>
+        </StackPanel>
     </Border>
 </Page>

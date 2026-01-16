@@ -51,33 +51,6 @@ namespace Safety_Wheel.Pages.Teacher
             DataContext = new MainViewModel(menuItemsCount);
             GlobalInnerFrame = FrameTeacher;
         }
-        private void DatesMenuControl_OnItemInvoked(object sender, HamburgerMenuItemInvokedEventArgs e)
-        {
-            if (e.InvokedItem is HamburgerMenuIconItem menuItem)
-            {
-                this.DatesMenuControl.Content = e.InvokedItem;
-
-                switch (menuItem.Tag?.ToString())
-                {
-                    case "HomePage":
-                        break;
-                    case "ProfilePage":
-                        break;
-                    case "SettingsPage":
-                        break;
-                    case "HelpPage":
-                        break;
-                    case "Exit":
-                        Application.Current.Shutdown();
-                        break;
-                }
-
-                if (!e.IsItemOptions)
-                {
-                    this.DatesMenuControl.IsPaneOpen = false;
-                }
-            }
-        }
 
         private void DatesMenuControl_ItemInvoked(object sender, MahApps.Metro.Controls.HamburgerMenuItemInvokedEventArgs e)
         {
