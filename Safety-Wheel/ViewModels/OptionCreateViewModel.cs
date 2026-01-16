@@ -16,7 +16,6 @@ namespace Safety_Wheel.ViewModels
         public bool IsImageOption { get; }
 
         private readonly QuestionCreateViewModel _parent;
-        private readonly System.Action _onActivated;
 
         public string Value
         {
@@ -26,17 +25,16 @@ namespace Safety_Wheel.ViewModels
                 NewOption.TextAnswer = value;
                 OnPropertyChanged();
 
-                if (IsGhost && !string.IsNullOrWhiteSpace(value))
-                {
-                    IsGhost = false;
-                    _onActivated?.Invoke();
-                }
+                RecalculateGhostState();
+
+                _parent.SyncGhostOptions();
+                _parent.RecalculateQuestionType();
             }
         }
 
         public bool? IsCorrect
         {
-            get => NewOption.IsCorrect ?? false;
+            get => NewOption.IsCorrect;
             set
             {
                 NewOption.IsCorrect = value;
@@ -49,13 +47,16 @@ namespace Safety_Wheel.ViewModels
         public OptionCreateViewModel(
             bool isGhost,
             bool isImageOption,
-            QuestionCreateViewModel parent,
-            System.Action onActivated)
+            QuestionCreateViewModel parent)
         {
             IsGhost = isGhost;
             IsImageOption = isImageOption;
             _parent = parent;
-            _onActivated = onActivated;
+        }
+
+        private void RecalculateGhostState()
+        {
+            IsGhost = string.IsNullOrWhiteSpace(Value);
         }
 
         public void SetOptionImage(string path)

@@ -35,6 +35,11 @@ namespace Safety_Wheel.ViewModels
         private readonly QuestionService _questionService = new();
         private readonly OptionService _optionService = new();
 
+        public TeacherCreateTestViewModel( )
+        {
+
+        }
+
         public TeacherCreateTestViewModel(Test? test = null)
         {
             if (test == null)
@@ -49,9 +54,6 @@ namespace Safety_Wheel.ViewModels
                 LoadTestForEdit(test);
             }
         }
-        public TeacherCreateTestViewModel()
-        {
-        }
 
         private void AddGhostQuestion()
         {
@@ -60,87 +62,146 @@ namespace Safety_Wheel.ViewModels
 
         private void OnQuestionActivated()
         {
-            if (Questions.Any(q => q.IsGhost)) return;
+            if (Questions.Any(q => q.IsGhost))
+                return;
+
             AddGhostQuestion();
         }
 
         public void Save()
         {
+            int qi = 1;
             if (SelectedSubject == null)
             {
                 MessageBox.Show("Выберите дисциплину");
                 return;
             }
+
             if (IsEditMode)
             {
                 _testService.Update(Test);
 
-                _questionService.DeleteByTest(Test.Id);
+                var dbQuestions = _questionService
+                    .GetQoestiosForCurrentTest(Test.Id)
+                    .ToList();
 
-                int i = 1;
+                var vmQuestions = Questions
+                    .Where(q => !q.IsGhost)
+                    .ToList();
 
-                foreach (var q in Questions.Where(q => !q.IsGhost))
+                int qj = 1;
+
+                foreach (var qvm in vmQuestions)
                 {
-                    q.NewQuestion.TestId = Test.Id;
+                    qvm.NewQuestion.TestId = Test.Id;
+                    qvm.NewQuestion.Number = qj++;
 
-                    var savedQuestion = _questionService.Add(q.NewQuestion, Test, i);
+                    if (qvm.NewQuestion.QuestionType == 2)
+                        qvm.NewQuestion.PicturePath = "//";
 
-                    var realOptions = q.Options.Where(o => !o.IsGhost).ToList();
+                    Question savedQuestion;
 
-                    if (!realOptions.Any(o => o.NewOption.IsCorrect == true))
+                    if (qvm.NewQuestion.Id == 0)
+                    {
+                        savedQuestion = _questionService.Add(
+                            qvm.NewQuestion,
+                            Test,
+                            (int)qvm.NewQuestion.Number);
+                    }
+                    else
+                    {
+                        _questionService.Update(qvm.NewQuestion);
+                        savedQuestion = qvm.NewQuestion;
+                    }
+
+                    var dbOptions = _optionService
+                        .GetOptionsByQuestion(savedQuestion.Id)
+                        .ToList();
+
+                    var vmOptions = qvm.Options
+                        .Where(o => !o.IsGhost)
+                        .ToList();
+
+                    if (!vmOptions.Any(o => o.NewOption.IsCorrect == true))
                     {
                         MessageBox.Show("В вопросе нет правильного ответа");
                         return;
                     }
 
-                    int j = 1;
-                    foreach (var o in realOptions)
+                    int oi = 1;
+
+                    foreach (var ovm in vmOptions)
                     {
-                        o.NewOption.QuestionId = savedQuestion.Id;
-                        _optionService.Add(o.NewOption, j++);
+                        ovm.NewOption.QuestionId = savedQuestion.Id;
+                        ovm.NewOption.Number = oi++;
+
+                        if (ovm.NewOption.Id == 0)
+                        {
+                            _optionService.Add(ovm.NewOption, (int)ovm.NewOption.Number);
+                        }
+                        else
+                        {
+                            _optionService.Update(ovm.NewOption);
+                        }
                     }
 
-                    i++;
+                    foreach (var dbOpt in dbOptions)
+                    {
+                        if (!vmOptions.Any(o => o.NewOption.Id == dbOpt.Id))
+                        {
+                            _optionService.Remove(dbOpt);
+                        }
+                    }
+                }
+
+                foreach (var dbQ in dbQuestions)
+                {
+                    if (!vmQuestions.Any(q => q.NewQuestion.Id == dbQ.Id))
+                    {
+                        _questionService.Remove(dbQ);
+                    }
                 }
 
                 MessageBox.Show("Тест обновлён");
+                return;
             }
-            else
+
+
+            _testService.Add(Test, Questions.Count(q => !q.IsGhost));
+
+            
+
+            foreach (var q in Questions.Where(q => !q.IsGhost))
             {
-                _testService.Add(Test, Questions.Count() - 1);
-                int i = 1;
-                int j = 1;
-                foreach (var q in Questions.Where(q => !q.IsGhost))
+                q.NewQuestion.TestId = Test.Id;
+
+                if (q.NewQuestion.QuestionType == 2)
+                    q.NewQuestion.PicturePath = "//";
+
+                var savedQuestion = _questionService.Add(
+                    q.NewQuestion,
+                    _testService.GetLastTest(),
+                    qi++);
+
+                var realOptions = q.Options.Where(o => !o.IsGhost).ToList();
+
+                if (!realOptions.Any(o => o.NewOption.IsCorrect == true))
                 {
-                    q.NewQuestion.TestId = Test.Id;
+                    MessageBox.Show("В вопросе нет правильного ответа");
+                    return;
+                }
 
-                    if (q.NewQuestion.QuestionType == 2)
-                        q.NewQuestion.PicturePath = "//";
-
-                    var savedQuestion = _questionService.Add(q.NewQuestion, _testService.GetLastTest(), i);
-
-                    var realOptions = q.Options.Where(o => !o.IsGhost).ToList();
-
-                    if (!realOptions.Any(o => o.NewOption.IsCorrect == true))
-                    {
-                        MessageBox.Show("В вопросе нет правильного ответа");
-                        return;
-                    }
-
-                    j = 1;
-                    foreach (var o in realOptions)
-                    {
-                        o.NewOption.QuestionId = savedQuestion.Id;
-                        _optionService.Add(o.NewOption, j);
-                        j++;
-                    }
-
-                    i++;
+                int oi = 1;
+                foreach (var o in realOptions)
+                {
+                    o.NewOption.QuestionId = savedQuestion.Id;
+                    _optionService.Add(o.NewOption, oi++);
                 }
             }
 
             MessageBox.Show("Тест сохранён");
         }
+
         private void LoadTestForEdit(Test test)
         {
             Test = test;
@@ -148,42 +209,35 @@ namespace Safety_Wheel.ViewModels
 
             Questions.Clear();
 
-            var list = _questionService.GetQoestiosForCurrentTest(test.Id);
+            var questions = _questionService.GetQoestiosForCurrentTest(test.Id);
 
-            foreach (var q in list)
+            foreach (var q in questions)
             {
                 var qvm = new QuestionCreateViewModel(false, OnQuestionActivated)
                 {
-                    PicturePath = q.PicturePath
+                    NewQuestion = q
                 };
 
-                qvm.NewQuestion = q;
+                qvm.Options.Clear();
 
-                _optionService.GetOptionsByQuestion(q.Id);
+                var options = _optionService.GetOptionsByQuestion(q.Id);
 
-                foreach (var opt in _optionService.Options)
+                foreach (var opt in options)
                 {
                     qvm.Options.Add(new OptionCreateViewModel(
                         false,
                         q.QuestionType == 2,
-                        qvm,
-                        null)
+                        qvm)
                     {
                         NewOption = opt
                     });
                 }
 
-                qvm.Options.Add(new OptionCreateViewModel(
-                    true,
-                    q.QuestionType == 2,
-                    qvm,
-                    qvm.RecalculateQuestionType));
-
+                qvm.SyncGhostOptions();
                 Questions.Add(qvm);
             }
 
             AddGhostQuestion();
         }
-
     }
 }

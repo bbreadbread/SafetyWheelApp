@@ -8,6 +8,11 @@ namespace Safety_Wheel.Pages.Teacher
 {
     public partial class TeacherCreateTestsPage : UserControl
     {
+        public TeacherCreateTestsPage()
+        {
+            InitializeComponent();
+            DataContext = new TeacherCreateTestViewModel();
+        }
         public TeacherCreateTestsPage(Test? test)
         {
             InitializeComponent();

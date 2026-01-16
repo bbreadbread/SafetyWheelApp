@@ -10,13 +10,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\add_picture_icon.png" />
     <None Remove="Images\back_logo.png" />
     <None Remove="Images\comments_icon.png" />
+    <None Remove="Images\delete_icon.png" />
     <None Remove="Images\exam_icon.png" />
     <None Remove="Images\exit_logo.png" />
     <None Remove="Images\icon.ico" />
     <None Remove="Images\magnifier_icon.png" />
+    <None Remove="Images\plus_icon.png" />
     <None Remove="Images\relax_icon.png" />
+    <None Remove="Images\sort_icon.png" />
     <None Remove="Images\tests_img\pdd-1\1-1-1.png" />
     <None Remove="Images\tests_img\pdd-1\1-1-17.png" />
     <None Remove="Images\tests_img\pdd-1\1-1-2.png" />
@@ -200,10 +204,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Images\add_picture_icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Images\back_logo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\comments_icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\delete_icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\exam_icon.png">
@@ -218,7 +228,13 @@
     <Content Include="Images\magnifier_icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Images\plus_icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Images\relax_icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\sort_icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\tests_img\pdd-1\1-1-1.png">

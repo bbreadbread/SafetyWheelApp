@@ -102,6 +102,7 @@ namespace Safety_Wheel.Pages.Student
             if (iamisteacher == true)
             {
                 CompleteTest();
+                HowManyCorrect();
                 ButtonConfirm.Visibility = Visibility.Collapsed;
             }
             else

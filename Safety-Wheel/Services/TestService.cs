@@ -79,9 +79,15 @@ namespace Safety_Wheel.Services
             }
         }
 
-        public void GetTestsBySubjectId(decimal subjectId)
+        public void GetTestsBySubjectId(int subjectId, int? teacherId = null)
         {
-            var tests = Tests
+            List<Test> tests;
+            if (teacherId != null) 
+            { 
+                tests = Tests.Where(t => t.TeacherId == teacherId).ToList();
+            }
+            
+            tests = Tests
                 .Where(t => t.SubjectId == subjectId)
                 .ToList();
 

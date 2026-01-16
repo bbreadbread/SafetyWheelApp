@@ -60,7 +60,7 @@
                                ItemTemplate="{StaticResource MenuItemTemplate}"
                                ItemsSource="{Binding MainMenuItems}"
                                SelectedItem="{Binding SelectedMainMenuItem, Mode=TwoWay}"
-                               SelectedIndex="0"
+                               SelectedIndex="2"
                                HamburgerVisibility="Visible"
                                Style="{StaticResource MainMenuStyle}" 
                                DockPanel.Dock="Left">
@@ -126,12 +126,16 @@
                     </mah:HamburgerMenu.ContentTemplate>
                 </mah:HamburgerMenu>
 
-                <StackPanel HorizontalAlignment="Center">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
                     <Frame x:Name="FrameTeacher"
-               NavigationUIVisibility="Hidden"
-                           HorizontalAlignment="Stretch"
-               VerticalAlignment="Stretch"/>
-                </StackPanel>
+                            NavigationUIVisibility="Hidden"
+                           Grid.Row="0"/>
+                </Grid>
+                
 
             </StackPanel>           
         </StackPanel>

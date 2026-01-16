@@ -16,12 +16,10 @@ namespace Safety_Wheel.ViewModels
         public bool IsGhost
         {
             get => _isGhost;
-            set => SetProperty(ref _isGhost, value);
+            private set => SetProperty(ref _isGhost, value);
         }
 
         private readonly Action _onActivated;
-
-        private bool _wasEverFilled = false;
 
         public string Text
         {
@@ -31,15 +29,10 @@ namespace Safety_Wheel.ViewModels
                 NewQuestion.TestQuest = value;
                 OnPropertyChanged();
 
-                if (IsGhost && !_wasEverFilled && value.Length > 0)
-                {
-                    _wasEverFilled = true;
-                    IsGhost = false;
-                    _onActivated?.Invoke();
-                }
+                RecalculateGhostState();
+                _onActivated?.Invoke();
             }
         }
-
 
         public bool IsMultiImage
         {
@@ -73,28 +66,51 @@ namespace Safety_Wheel.ViewModels
         {
             IsGhost = isGhost;
             _onActivated = onActivated;
-            AddGhostOption();
+
+            SyncGhostOptions();
         }
 
-        private void AddGhostOption()
+        private void RecalculateGhostState()
         {
-            Options.Add(new OptionCreateViewModel(
-                true,
-                IsMultiImage,
-                this,
-                OnOptionActivated));
-        }
-
-        private void OnOptionActivated()
-        {
-            if (Options.Any(o => o.IsGhost)) return;
-            AddGhostOption();
+            IsGhost = string.IsNullOrWhiteSpace(Text);
         }
 
         private void ResetOptions()
         {
             Options.Clear();
-            AddGhostOption();
+            SyncGhostOptions();
+        }
+
+        public void SyncGhostOptions()
+        {
+            var realOptions = Options.Where(o => !o.IsGhost).ToList();
+            var ghostOptions = Options.Where(o => o.IsGhost).ToList();
+
+            if (!realOptions.Any())
+            {
+                Options.Clear();
+                Options.Add(CreateGhostOption());
+                return;
+            }
+
+            if (ghostOptions.Count == 0)
+            {
+                Options.Add(CreateGhostOption());
+            }
+
+            if (ghostOptions.Count > 1)
+            {
+                foreach (var extra in ghostOptions.Skip(1).ToList())
+                    Options.Remove(extra);
+            }
+        }
+
+        private OptionCreateViewModel CreateGhostOption()
+        {
+            return new OptionCreateViewModel(
+                isGhost: true,
+                isImageOption: IsMultiImage,
+                parent: this);
         }
 
         public void RecalculateQuestionType()
@@ -106,8 +122,8 @@ namespace Safety_Wheel.ViewModels
             }
 
             int correctCount = Options
-                                .Where(o => !o.IsGhost)
-                                .Count(o => o.NewOption.IsCorrect == true);
+                .Where(o => !o.IsGhost)
+                .Count(o => o.IsCorrect == true);
 
             NewQuestion.QuestionType = correctCount <= 1 ? 1 : 3;
         }

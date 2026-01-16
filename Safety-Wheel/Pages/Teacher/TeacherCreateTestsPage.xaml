@@ -15,7 +15,7 @@
         <vm:TeacherCreateTestViewModel/>
     </UserControl.DataContext>
 
-    <ScrollViewer Height="900">
+    <ScrollViewer Height="900" VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="20">
 
             <TextBlock Text="Дисциплина"

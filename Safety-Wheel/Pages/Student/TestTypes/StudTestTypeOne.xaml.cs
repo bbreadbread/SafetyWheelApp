@@ -45,7 +45,7 @@ namespace Safety_Wheel.Pages.Student.TestTypes
             {
                 if (_question.PicturePath != "//")
                 {
-                    PathImage = $"../../../../{_question.PicturePath.ToLower()}";
+                    PathImage = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _question.PicturePath);
                 }
             }
             if (isThreeType == null)

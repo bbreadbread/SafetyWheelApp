@@ -20,6 +20,7 @@ namespace Safety_Wheel.ViewModels
         private ObservableCollection<MenuItemViewModel> _menuAttemptsItems;
         private StudentService _studentService = new();
         private AttemptService _attemptService = new();
+        private SubjectService _subjectService = new();
         private TestService _testService = new();
 
         private MenuItemViewModel _selectedMainMenuItem;
@@ -150,47 +151,30 @@ namespace Safety_Wheel.ViewModels
 
             SelectedAttempt = null;
         }
-        private void LoadTestsForEdit()
+        private void LoadSubjectForEdit()
         {
             MenuItems.Clear();
             CurrentContent = null;
+            _subjectService.GetAll();
 
-            _testService.GetAll(CurrentUser.Id);
-
-            foreach (var test in _testService.Tests)
+            foreach (var sub in _subjectService.Subjects)
             {
                 MenuItems.Add(new MenuItemViewModel(this)
                 {
                     Icon = new TextBlock
                     {
-                        Text = $"{test.Name}",
+                        Text = $"{sub.Name}",
                         FontSize = 20,
                         FontWeight = FontWeights.Bold,
                         Foreground = Brushes.White,
                         HorizontalAlignment = HorizontalAlignment.Center,
                         VerticalAlignment = VerticalAlignment.Center
                     },
-                    Label = test.Name,
-                    ToolTip = "Редактировать тест",
-                    Tag = test
+                    Label = sub.Name,
+                    ToolTip = $"Показать все тесты для {sub.Name}",
+                    Tag = sub
                 });
             }
-
-            MenuItems.Add(new MenuItemViewModel(this)
-            {
-                Icon = new TextBlock
-                {
-                    Text = "+",
-                    FontSize = 24,
-                    FontWeight = FontWeights.Bold,
-                    Foreground = Brushes.White,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                },
-                Label = "Создать новый тест",
-                ToolTip = "Создание нового теста",
-                Tag = "NEW_TEST"
-            });
         }
 
         public ObservableCollection<MenuItemViewModel> MainMenuItems
@@ -251,9 +235,8 @@ namespace Safety_Wheel.ViewModels
                                 TeacherMainPage.GlobalInnerFrame?.Navigate(new TeacherStatisticsPage());
                                 LoadStudentsForStatistics();
                                 break;
-                            case MainMenuType.EditCreateTests:
-                                LoadTestsForEdit();
-                                TeacherMainPage.GlobalInnerFrame?.Navigate(new TeacherCreateTestsPage(null));
+                            case MainMenuType.EditCreateTests:                                
+                                LoadSubjectForEdit();
                                 break;
 
 
@@ -349,15 +332,10 @@ namespace Safety_Wheel.ViewModels
                 }
                 else if (menuType == MainMenuType.EditCreateTests)
                 {
-                    if (value?.Tag is Test test)
+                    if (value?.Tag is Subject subject)
                     {
                         TeacherMainPage.GlobalInnerFrame
-                            ?.Navigate(new TeacherCreateTestsPage(test));
-                    }
-                    else if (value?.Tag?.ToString() == "NEW_TEST")
-                    {
-                        TeacherMainPage.GlobalInnerFrame
-                            ?.Navigate(new TeacherCreateTestsPage(null));
+                            ?.Navigate(new TeacherAllTests(subject));
                     }
                 }
 
