@@ -18,6 +18,7 @@ public class Attempt : ObservableObject
     private ObservableCollection<StudentAnswer> _studentAnswers = new();
     private Student? _students;
     private TestType? _testTypeNavigation;
+    private Test? _test;
 
     public int Id
     {
@@ -78,7 +79,11 @@ public class Attempt : ObservableObject
         get => _students;
         set => SetProperty(ref _students, value);
     }
-
+    public virtual Test? Test
+    {
+        get => _test;
+        set => SetProperty(ref _test, value);
+    }
     public virtual TestType? TestTypeNavigation
     {
         get => _testTypeNavigation;

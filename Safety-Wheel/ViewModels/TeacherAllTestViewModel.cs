@@ -15,7 +15,6 @@ namespace Safety_Wheel.ViewModels
         public ObservableCollection<TestListItemViewModel> Tests { get; } = new ObservableCollection<TestListItemViewModel>();
 
 
-        public string SubjectName => _subject.Name;
 
         public TeacherAllTestViewModel(Subject subject)
         {

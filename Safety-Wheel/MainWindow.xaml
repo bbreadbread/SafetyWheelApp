@@ -1,12 +1,16 @@
-﻿<Window x:Class="Safety_Wheel.MainWindow"
+﻿<Controls:MetroWindow x:Class="Safety_Wheel.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Safety_Wheel"
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
         mc:Ignorable="d"
         Title="Безопасное колесо" 
-        WindowState="Maximized">
+        WindowState="Maximized"
+        WindowTitleBrush="{StaticResource DarkBlue}"
+        GlowBrush="DarkBlue"
+        BorderBrush="{StaticResource DarkBlue}">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -74,4 +78,4 @@
            VerticalAlignment="Stretch"
                Source="Pages/Student/AuthorizationPage.xaml"/>
     </Grid>
-</Window>
+</Controls:MetroWindow>

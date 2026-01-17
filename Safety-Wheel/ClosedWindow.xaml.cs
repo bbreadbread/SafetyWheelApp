@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using MahApps.Metro.Controls;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,7 +21,7 @@ namespace Safety_Wheel
     /// <summary>
     /// Логика взаимодействия для ClosedWindow.xaml
     /// </summary>
-    public partial class ClosedWindow : Window, INotifyPropertyChanged
+    public partial class ClosedWindow : MetroWindow, INotifyPropertyChanged
     {
         private string _warningText2;
         public string WarningText2

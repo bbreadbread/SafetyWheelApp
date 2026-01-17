@@ -1,11 +1,15 @@
-﻿<Window x:Class="Safety_Wheel.ClosedWindow"
+﻿<Controls:MetroWindow x:Class="Safety_Wheel.ClosedWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Safety_Wheel"
         mc:Ignorable="d"
-        Title="ClosedWindow" Height="200" Width="400">
+        Title="ClosedWindow" Height="200" Width="400"
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+        WindowTitleBrush="{StaticResource DarkBlue}"
+        GlowBrush="DarkBlue"
+        BorderBrush="{StaticResource DarkBlue}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -29,4 +33,4 @@
             <Button Style="{StaticResource MiniHomeButton}" x:Name="BtnCancel" Grid.Row="3" Grid.ColumnSpan="2" Content="Отмена" Click="ButtonCancel_Click" />
         </StackPanel>
     </Grid>
-</Window>
+</Controls:MetroWindow>

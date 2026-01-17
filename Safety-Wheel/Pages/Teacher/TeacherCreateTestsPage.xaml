@@ -17,20 +17,20 @@
 
     <ScrollViewer Height="900" VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="20">
-
             <TextBlock Text="Дисциплина"
            FontWeight="Bold"
            Margin="0,0,0,5"/>
-
-            <ComboBox ItemsSource="{Binding Subjects}"
+<ComboBox ItemsSource="{Binding Subjects}"
           SelectedItem="{Binding SelectedSubject}"
-          DisplayMemberPath="Name"
-          Margin="0,0,0,15"
+          DisplayMemberPath="Name"  Margin="0,0,0,15"
                       Style="{DynamicResource CBStyle}"/>
 
-            
             <TextBox Text="{Binding Test.Name, UpdateSourceTrigger=PropertyChanged}"
                      Style="{DynamicResource TBoxStyle}"/>
+
+
+
+
 
             <ItemsControl ItemsSource="{Binding Questions}">
                 <ItemsControl.ItemTemplate>
@@ -43,10 +43,13 @@
                                 Opacity="{Binding IsGhost,
                                     Converter={StaticResource BoolToOpacity}}">
                             <StackPanel>
-
-                                <CheckBox Content="Варианты ответов в виде изображений"
+                                <Grid HorizontalAlignment="Left" VerticalAlignment="Center">
+                                    <CheckBox Content="Варианты ответов в виде изображений"
                                           IsChecked="{Binding IsMultiImage}"
-                                          Style="{StaticResource CheckBStyle}"/>
+                                          Style="{StaticResource CheckBStyle}"
+                                              Width="Auto"/>
+                                </Grid>
+                                
 
                                 <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
                                          Style="{DynamicResource TBoxStyle}"/>
@@ -54,7 +57,7 @@
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*"/>
@@ -64,7 +67,7 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal"
-                                                        Margin="0,3"
+                                                        Margin="3"
                                                         Opacity="{Binding IsGhost,
                                                                   Converter={StaticResource BoolToOpacity}}">
 
@@ -102,8 +105,7 @@
                                                 Width="350">
                                             <Image Source="{Binding PicturePath}"
                                                     Height="350"
-                                                    Width="350"
-                                            Margin="0,5"/>
+                                                    Width="350"/>
                                         </Button>
                                     </Border>
 
@@ -121,7 +123,7 @@
 
             <Button Content="СОХРАНИТЬ ТЕСТ"
                     Margin="0,20"
-                    Click="Save_Click"/>
+                    Click="Save_Click" Style="{StaticResource DownButton}"/>
 
         </StackPanel>
     </ScrollViewer>

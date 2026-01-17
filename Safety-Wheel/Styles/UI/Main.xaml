@@ -17,23 +17,26 @@
         <Setter Property="Width" Value="920"/>
     </Style>
     <Style TargetType="ComboBox" BasedOn="{StaticResource MahApps.Styles.ComboBox}" x:Key="CBStyle">
-        <Setter Property="Width" Value="900"/>
+        <Setter Property="Width" Value="870"/>
         <Setter Property="Height" Value="66"/>
         <Setter Property="FontSize" Value="20"/>
-        <Setter Property="Background" Value="LightBlue"/>
+        <Setter Property="Background" Value="{StaticResource LightBlue}"/>
         <Setter Property="mah:TextBoxHelper.Watermark" Value="Выберите дисциплину"/>
+        <Setter Property="mah:TextBoxHelper.ClearTextButton" Value="True"/>
     </Style>
     <Style TargetType="TextBox" BasedOn="{StaticResource MahApps.Styles.TextBox}" x:Key="TBoxStyle">
-        <Setter Property="Width" Value="900"/>
+        <Setter Property="Width" Value="870"/>
         <Setter Property="Height" Value="66"/>
         <Setter Property="FontSize" Value="20"/>
-        <Setter Property="Background" Value="LightBlue"/>
+        <Setter Property="Background" Value="{StaticResource LightBlue}"/>
         <Setter Property="mah:TextBoxHelper.Watermark" Value="Название теста"/>
+        <Setter Property="mah:TextBoxHelper.ClearTextButton" Value="True"/>
     </Style>
     <Style TargetType="CheckBox" x:Key="CheckBStyle">
         <Setter Property="AllowDrop" Value="False"/>
         <Setter Property="Width" Value="30"/>
         <Setter Property="Height" Value="30"/>
+        <Setter Property="FontSize" Value="20"/>
     </Style>
     <!--////////-->
     <Style TargetType="TextBlock" x:Key="MainText">
@@ -739,7 +742,6 @@
         <Setter Property="PaneBackground" Value="{StaticResource HoverGreen}"/>
         <Setter Property="PaneForeground" Value="{StaticResource White}"/>
         <Setter Property="CompactPaneLength"              Value="100"/>
-        <Setter Property="Panel.ZIndex" Value="100"/>
         <Setter Property="OpenPaneLength"                 Value="250"/>
     </Style>
 

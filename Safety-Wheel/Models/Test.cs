@@ -57,6 +57,7 @@ public class Test : ObservableObject
         get => _dateOfCreating;
         set => SetProperty(ref _dateOfCreating, value);
     }
+    public virtual ICollection<Attempt> Attempts { get; set; } = new List<Attempt>();
     public virtual ObservableCollection<Question> Questions
     {
         get => _questions;

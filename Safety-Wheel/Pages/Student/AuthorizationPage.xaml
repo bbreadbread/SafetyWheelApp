@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Safety_Wheel.Pages.Student"
+      xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"        
       mc:Ignorable="d" 
       d:DesignHeight="1080" d:DesignWidth="1920"
       Title="MainPage">
@@ -31,7 +32,7 @@
             <Border.Effect>
                 <DropShadowEffect ShadowDepth="0" BlurRadius="3" Opacity="0.3" Color="Black"/>
             </Border.Effect>
-            <TextBox x:Name="TbLogin" BorderThickness="0" Background="Transparent" VerticalAlignment="Center" FontWeight="Medium" FontSize="30">
+            <TextBox x:Name="TbLogin" BorderThickness="0" Background="Transparent" VerticalAlignment="Center" FontWeight="Medium" FontSize="30" mah:TextBoxHelper.ClearTextButton="True">
                 <TextBox.Template>
                     <ControlTemplate TargetType="TextBox">
                         <Border x:Name="border" Background="Transparent">

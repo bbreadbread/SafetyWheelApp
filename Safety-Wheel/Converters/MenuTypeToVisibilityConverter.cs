@@ -6,7 +6,6 @@ using Safety_Wheel.ViewModels;
 
 namespace Safety_Wheel.Converters
 {
-    // Конвертер для одного значения (если где-то используется)
     public class MenuTypeToSingleVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

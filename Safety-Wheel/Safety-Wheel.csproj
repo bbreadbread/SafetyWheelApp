@@ -7,6 +7,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Images\wheel.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -732,6 +733,7 @@
     <Content Include="Images\time_icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Images\wheel.ico" />
   </ItemGroup>
 
 </Project>

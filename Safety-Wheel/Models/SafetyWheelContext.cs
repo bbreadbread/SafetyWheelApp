@@ -60,6 +60,13 @@ public partial class SafetyWheelContext : DbContext
             entity.HasOne(d => d.TestTypeNavigation).WithMany(p => p.Attempts)
                 .HasForeignKey(d => d.TestType)
                 .HasConstraintName("FK_Attempts_TestType");
+
+            entity.HasOne(d => d.Test)
+                .WithMany(p => p.Attempts)
+                .HasForeignKey(d => d.TestId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Attempts_Tests");
+
         });
 
         modelBuilder.Entity<Option>(entity =>
@@ -68,8 +75,10 @@ public partial class SafetyWheelContext : DbContext
             entity.Property(e => e.QuestionId).HasColumnName("Question_ID");
             entity.Property(e => e.TextAnswer).HasColumnName("Text_Answer");
 
-            entity.HasOne(d => d.Question).WithMany(p => p.Options)
+            entity.HasOne(d => d.Question)
+                .WithMany(p => p.Options)
                 .HasForeignKey(d => d.QuestionId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Options_Questions1");
         });
 
@@ -84,8 +93,10 @@ public partial class SafetyWheelContext : DbContext
                 .HasForeignKey(d => d.QuestionType)
                 .HasConstraintName("FK_Questions_QuestionType");
 
-            entity.HasOne(d => d.Test).WithMany(p => p.Questions)
+            entity.HasOne(d => d.Test)
+                .WithMany(p => p.Questions)
                 .HasForeignKey(d => d.TestId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Questions_Tests");
         });
 
@@ -122,16 +133,19 @@ public partial class SafetyWheelContext : DbContext
             entity.HasOne(d => d.Attempt)
                   .WithMany(p => p.StudentAnswers)
                   .HasForeignKey(d => d.AttemptId)
+                  .OnDelete(DeleteBehavior.Cascade)
                   .HasConstraintName("FK_StudentAnswers_Attempts1");
 
             entity.HasOne(d => d.Question)
                   .WithMany(p => p.StudentAnswers)
                   .HasForeignKey(d => d.QuestionId)
+                  .OnDelete(DeleteBehavior.Cascade)
                   .HasConstraintName("FK_StudentAnswers_Questions1");
 
             entity.HasOne(d => d.Option)
                   .WithMany(p => p.StudentAnswers)
                   .HasForeignKey(d => d.OptionId)
+                  .OnDelete(DeleteBehavior.Restrict)
                   .HasConstraintName("FK_StudentAnswers_Options1");
         });
 

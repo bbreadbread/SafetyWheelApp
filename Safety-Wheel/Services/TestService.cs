@@ -60,10 +60,47 @@ namespace Safety_Wheel.Services
 
         public void Remove(Test test)
         {
-            _db.Remove(test);
-            if (Commit() > 0)
-                if (Tests.Contains(test))
-                    Tests.Remove(test);
+            if (Tests.Contains(test))
+            {
+                var attempts = _db.Attempts
+                                .Where(a => a.TestId == test.Id)
+                                .ToList();
+
+                var attemptId = attempts
+                    .Select(a => a.Id)
+                    .ToList();
+
+                var studentAnswersByAttempts = _db.StudentAnswers
+                    .Where(sa => attemptId.Contains(sa.AttemptId))
+                    .ToList();
+
+                _db.StudentAnswers.RemoveRange(studentAnswersByAttempts);
+
+                var questions = _db.Questions
+                    .Where(q => q.TestId == test.Id)
+                    .ToList();
+
+                var questionIds = questions
+                    .Select(q => q.Id)
+                    .ToList();
+
+                var studentAnswersByQuestions = _db.StudentAnswers
+                    .Where(sa => questionIds.Contains(sa.QuestionId))
+                    .ToList();
+
+                _db.StudentAnswers.RemoveRange(studentAnswersByQuestions);
+
+                var options = _db.Options
+                    .Where(o => questionIds.Contains(o.QuestionId))
+                    .ToList();
+
+                _db.Options.RemoveRange(options);
+                _db.Questions.RemoveRange(questions);
+                _db.Attempts.RemoveRange(attempts);
+                _db.Remove(test);
+                _db.Tests.Remove(test);
+                _db.SaveChanges();
+            }            
         }
 
         public void Update(Test test)
