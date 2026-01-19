@@ -77,11 +77,7 @@ namespace Safety_Wheel
             CurrentUser.Clear();
             UpdateUserName("");
         }
-
-        #endregion
-
-        #region Teacher Manager Flyout
-
+        
         public void OpenTeacherManagerFlyout()
         {
             ReloadStudents();
