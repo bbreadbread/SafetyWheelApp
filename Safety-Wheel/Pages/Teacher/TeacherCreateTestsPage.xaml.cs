@@ -8,15 +8,15 @@ namespace Safety_Wheel.Pages.Teacher
 {
     public partial class TeacherCreateTestsPage : UserControl
     {
+        Test? _test = null;
         public TeacherCreateTestsPage()
         {
             InitializeComponent();
-            DataContext = new TeacherCreateTestViewModel();
         }
         public TeacherCreateTestsPage(Test? test)
         {
+            _test = test;
             InitializeComponent();
-            DataContext = new TeacherCreateTestViewModel(test);
         }
 
         private void AddQuestionImage_Click(object sender, RoutedEventArgs e)
@@ -51,6 +51,18 @@ namespace Safety_Wheel.Pages.Teacher
         {
             if (DataContext is TeacherCreateTestViewModel vm)
                 vm.Save();
+        }
+
+        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (_test != null)
+            {
+                DataContext = new TeacherCreateTestViewModel(_test);
+            }
+            else
+            {
+                DataContext = new TeacherCreateTestViewModel(null);
+            }
         }
     }
 }

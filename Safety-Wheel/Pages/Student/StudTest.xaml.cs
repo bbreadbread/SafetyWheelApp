@@ -31,14 +31,13 @@ namespace Safety_Wheel.Pages.Student
         public static bool _isTestActivated;
         private bool _currentQuestionClosed;
         public static bool _canClosed = false;
-        public static Test _test { get; set; }
+        public static Test _test { get; set; } = new ();
         private List<Question> _questions;
         private int _currentQuestionIndex = 0;
-        public static Attempt _attempt;
+        public static Attempt _attempt = new();
         private AttemptService _attemptService = new();
         private StudentAnswerService studentAnswerService = new();
         private TestTypeService testTypeService = new();
-        private QuestionService questionService;    
         public string NameTest { get; set; }
         public string SubjectName { get; set; }
 
@@ -51,7 +50,7 @@ namespace Safety_Wheel.Pages.Student
         private string _statusTest;
 
         
-        public static DispatcherTimer _timer;
+        public static DispatcherTimer _timer = new();
         private DateTime _startTime;
         private int? _timeLimitSeconds;
 
@@ -470,7 +469,8 @@ namespace Safety_Wheel.Pages.Student
                 toolTip.DataContext = image.DataContext;
 
             toolTip.IsOpen = !toolTip.IsOpen;
-        }public int CorrectCount
+        }
+        public int CorrectCount
         {
             get => _correctCount;
             set

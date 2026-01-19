@@ -1,4 +1,5 @@
 ﻿using Safety_Wheel.Models;
+using Safety_Wheel.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,13 +8,15 @@ using System.Threading.Tasks;
 
 namespace Safety_Wheel.ViewModels
 {
-    public class TestListItemViewModel
+    public class TestListItemViewModel : ObservableObject
     {
-        public Test? Test { get; }
+        private TestService _testService;
+        public Test? Test { get; } = new();
         public bool IsCreateCard { get; }
 
-        public TestListItemViewModel(Test test)
+        public TestListItemViewModel(Test test, TestService testService)
         {
+            _testService = testService;
             Test = test;
             IsCreateCard = false;
         }
@@ -21,6 +24,17 @@ namespace Safety_Wheel.ViewModels
         public TestListItemViewModel()
         {
             IsCreateCard = true;
+        }
+
+        public bool? IsPublic
+        {
+            get => Test.IsPublic;
+            set
+            {
+                Test.IsPublic = value;                
+                OnPropertyChanged();
+                _testService.Update(Test);
+            }
         }
     }
 }

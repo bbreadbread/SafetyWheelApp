@@ -5,35 +5,52 @@
              xmlns:local="clr-namespace:Safety_Wheel.Pages.Teacher"
              Loaded="TeacherStatisticsPage_Loaded">
 
-    <ScrollViewer>
-        <StackPanel Margin="10">
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-            <TextBlock x:Name="StudentTitle"
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0"
+                       Grid.Column="0"
+                       Grid.ColumnSpan="2"
+                       x:Name="StudentTitle"
                        FontSize="18"
                        FontWeight="Bold"
                        Margin="0,0,0,10"/>
 
-            <scottPlot:WpfPlot x:Name="OverallTimePlot"
+            <scottPlot:WpfPlot Grid.Row="1"
+                               Grid.Column="0"
+                               x:Name="OverallTimePlot"
                                Height="300"
-                               Margin="0,0,0,20"/>
+                               Margin="0,0,20,0"/>
 
-            <ItemsControl x:Name="TestsItemsControl">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="{x:Type local:TestStats}">
-                        <StackPanel Margin="0,0,0,30">
+            <ScrollViewer Grid.Row="1"
+                          Grid.Column="1"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
 
-                            <TextBlock Text="{Binding TestName}"
-                                       FontSize="16"
-                                       FontWeight="Bold"
-                                       Margin="0,0,0,5"/>
+                <ItemsControl x:Name="TestsItemsControl">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type local:TestStats}">
+                            <StackPanel Margin="0,0,0,30">
 
-                            <scottPlot:WpfPlot Height="300"
-                                               Loaded="PerformancePlot_Loaded"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                                <TextBlock Text="{Binding TestName}"
+                                           FontSize="16"
+                                           FontWeight="Bold"
+                                           Margin="0,0,0,5"/>
 
-        </StackPanel>
-    </ScrollViewer>
+                                <scottPlot:WpfPlot Height="300"
+                                                   Loaded="PerformancePlot_Loaded"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
 </UserControl>

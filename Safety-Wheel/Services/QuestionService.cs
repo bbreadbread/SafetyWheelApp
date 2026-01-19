@@ -74,13 +74,23 @@ namespace Safety_Wheel.Services
             }
         }
 
-        public List<Question> GetQoestiosForCurrentTest(int currentTest)
+        public List<Question> GetQuestiosForCurrentTest(int currentTest)
         {
             return Questions
                   .Where(q => q.TestId == currentTest)
                   .OrderBy(q => q.Number)
                   .ToList();
         }
+
+        public async Task<List<Question>> GetQuestionsForTestAsync(int testId)
+        {
+            return await _db.Questions
+                .AsNoTracking()
+                .Where(q => q.TestId == testId)
+                .Include(q => q.Options)
+                .ToListAsync();
+        }
+
 
         public void DeleteByTest(int testId)
         {

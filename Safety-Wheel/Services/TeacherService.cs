@@ -47,6 +47,12 @@ namespace Safety_Wheel.Services
             }
         }
 
+        public Teacher GetTeacherById(int id)
+        {
+            var tea = Teachers.Where(q=> q.Id == id).FirstOrDefault();
+            return tea;
+        }
+
         public void Remove(Teacher teacher)
         {
             _db.Remove(teacher);
@@ -65,6 +71,12 @@ namespace Safety_Wheel.Services
                 existing.Name = teacher.Name;
                 Commit();
             }
+        }
+
+        public bool UserExistsByLogin(string login)
+        {
+            return _db.Teachers.Any(t => t.Login == login)
+                || _db.Students.Any(s => s.Login == login);
         }
     }
 }

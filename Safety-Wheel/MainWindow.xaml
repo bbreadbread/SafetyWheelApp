@@ -78,4 +78,60 @@
            VerticalAlignment="Stretch"
                Source="Pages/Student/AuthorizationPage.xaml"/>
     </Grid>
+
+    <Controls:MetroWindow.Flyouts>
+        <Controls:FlyoutsControl>
+
+            <Controls:Flyout x:Name="TeacherManagerFlyout"
+                        Header="Управление учениками"
+                        Position="Right"
+                        Width="450"
+                        IsOpen="False"
+                        IsPinned="True"
+                             Background="{StaticResource MainBlue}"
+                             IsOpenChanged="TeacherManagerFlyout_IsOpenChanged">
+
+                <Grid Margin="15">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Button Style="{StaticResource MiniMiniHomeButton}" Content="Добавить" Click="AddStudent_Click"/>
+                        <Button Style="{StaticResource MiniMiniHomeButton}" Content="Сохранить" Click="SaveStudent_Click" Margin="10,0"/>
+                        <Button Style="{StaticResource MiniMiniHomeButton}" Content="Удалить" Click="DeleteStudent_Click"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1" Margin="0,0,0,10">
+                        <TextBlock Text="Имя"/>
+                        <TextBox x:Name="NameTextBox"/>
+
+                        <TextBlock Text="Логин" Margin="0,5,0,0"/>
+                        <TextBox x:Name="LoginTextBox"/>
+
+                        <TextBlock Text="Логин" Margin="0,5,0,0"/>
+                        <TextBox x:Name="PasswordTextBox"/>
+                    </StackPanel>
+
+                    <DataGrid x:Name="StudentsGrid"
+                              Grid.Row="2"
+                              IsReadOnly="True"
+                              SelectionMode="Single"
+                              SelectionUnit="FullRow"
+                              AutoGenerateColumns="False"
+                              SelectionChanged="StudentsGrid_SelectionChanged">
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Имя Фамилия" Binding="{Binding Name}" />
+                            <DataGridTextColumn Header="Логин" Binding="{Binding Login}" />
+                            <DataGridTextColumn Header="Пароль" Binding="{Binding Password}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+
+            </Controls:Flyout>
+        </Controls:FlyoutsControl>
+    </Controls:MetroWindow.Flyouts>
 </Controls:MetroWindow>

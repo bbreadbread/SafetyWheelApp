@@ -9,15 +9,21 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Safety_Wheel.Pages.Student;
 
 namespace Safety_Wheel.ViewModels
 {
     public class MainViewModel : ObservableObject
     {
+
         private ObservableCollection<MenuItemViewModel> _mainMenuItems;
+        private ObservableCollection<MenuItemViewModel> _menuOptionItems;
+
         private ObservableCollection<MenuItemViewModel> _menuItems;
         private ObservableCollection<MenuItemViewModel> _menuDatesItems;
         private ObservableCollection<MenuItemViewModel> _menuAttemptsItems;
+        private ObservableCollection<MenuItemViewModel> _menuTestsItems;
+        
         private StudentService _studentService = new();
         private AttemptService _attemptService = new();
         private SubjectService _subjectService = new();
@@ -27,6 +33,7 @@ namespace Safety_Wheel.ViewModels
         private MenuItemViewModel _selectedStudent;
         private MenuItemViewModel _selectedDate;
         private MenuItemViewModel _selectedAttempt;
+        private MenuItemViewModel _selectedTest;
 
         private Student _currentStudent;
         private DateTime? _selectedDateValue;
@@ -36,7 +43,8 @@ namespace Safety_Wheel.ViewModels
         {
             TestResults,
             Statistics,
-            EditCreateTests
+            EditCreateTests,
+            TeacherManager
         }
 
         public MainViewModel(int count)
@@ -52,33 +60,46 @@ namespace Safety_Wheel.ViewModels
             {
                 new MenuItemViewModel(this)
                 {
-                    Icon = new PackIconMaterial { Kind = PackIconMaterialKind.ChartLine },
-                    Label = "Статистика",
-                    ToolTip = "Статистика по тестам и студентам",
-                    Tag = MainMenuType.Statistics
-                },
-                new MenuItemViewModel(this)
-                {
                     Icon = new PackIconMaterial { Kind = PackIconMaterialKind.ChartBar },
                     Label = "Результаты тестирования",
                     ToolTip = "Просмотр результатов тестирования студентов",
                     Tag = MainMenuType.TestResults
-                },                
+                },
                 new MenuItemViewModel(this)
                 {
                     Icon = new PackIconMaterial { Kind = PackIconMaterialKind.PlusBox },
                     Label = "Создание тестов",
                     ToolTip = "Создание и редактирование тестов",
                     Tag = MainMenuType.EditCreateTests
+                },
+                new MenuItemViewModel(this)
+                {
+                    Icon = new PackIconMaterial { Kind = PackIconMaterialKind.ChartLine },
+                    Label = "Статистика",
+                    ToolTip = "Статистика по тестам и студентам",
+                    Tag = MainMenuType.Statistics
+                }
+            };
+
+            MenuOptionItems = new ObservableCollection<MenuItemViewModel>
+            {
+                new MenuItemViewModel(this)
+                {
+                    Icon = new PackIconMaterial { Kind = PackIconMaterialKind.AccountCog },
+                    Label = "Управление учениками",
+                    ToolTip = "Ученики преподавателя",
+                    Tag = MainMenuType.TeacherManager
                 }
             };
         }
+
 
         public void CreateMenuItems()
         {
             MenuItems = new ObservableCollection<MenuItemViewModel> { };
             MenuDatesItems = new ObservableCollection<MenuItemViewModel> { };
             MenuAttemptsItems = new ObservableCollection<MenuItemViewModel> { };
+            MenuTestsItems = new ObservableCollection<MenuItemViewModel> { };
         }
 
         private void LoadStudentDates(Student student)
@@ -141,7 +162,7 @@ namespace Safety_Wheel.ViewModels
                         HorizontalAlignment = HorizontalAlignment.Center,
                         VerticalAlignment = VerticalAlignment.Center
                     },
-                    Label = $"Результат: {attempt.Score?.ToString() ?? "Не оценено"}",
+                    Label = $"+ : {attempt.Score?.ToString() ?? "Не оценено"}",
                     ToolTip = $"Нажмите для просмотра теста\nВремя: {attempt.StartedAt:HH:mm}\nРезультат: {attempt.Score}",
                     Tag = attempt
                 };
@@ -151,32 +172,41 @@ namespace Safety_Wheel.ViewModels
 
             SelectedAttempt = null;
         }
-        private void LoadSubjectForEdit()
+        
+        private void LoadTests()
         {
-            MenuItems.Clear();
+            MenuTestsItems.Clear();
             CurrentContent = null;
-            _subjectService.GetAll();
 
-            foreach (var sub in _subjectService.Subjects)
+            _testService.GetAll(null, CurrentUser.Id);
+
+            foreach (var test in _testService.Tests)
             {
-                MenuItems.Add(new MenuItemViewModel(this)
+                var attemptItem = new MenuItemViewModel(this)
                 {
                     Icon = new TextBlock
                     {
-                        Text = $"{sub.Name}",
-                        FontSize = 20,
+                        Text = $"{test.Name}",
+                        FontSize = 16,
                         FontWeight = FontWeights.Bold,
                         Foreground = Brushes.White,
                         HorizontalAlignment = HorizontalAlignment.Center,
                         VerticalAlignment = VerticalAlignment.Center
                     },
-                    Label = sub.Name,
-                    ToolTip = $"Показать все тесты для {sub.Name}",
-                    Tag = sub
-                });
+                    Label = $"лабел",
+                    ToolTip = $"тултип",
+                    Tag = test
+                };
+
+                MenuTestsItems.Add(attemptItem);
             }
         }
-
+        
+        public ObservableCollection<MenuItemViewModel> MenuOptionItems
+        {
+            get => _menuOptionItems;
+            set => SetProperty(ref _menuOptionItems, value);
+        }
         public ObservableCollection<MenuItemViewModel> MainMenuItems
         {
             get => _mainMenuItems;
@@ -200,6 +230,11 @@ namespace Safety_Wheel.ViewModels
             get => _menuAttemptsItems;
             set => SetProperty(ref _menuAttemptsItems, value);
         }
+        public ObservableCollection<MenuItemViewModel> MenuTestsItems
+        {
+            get => _menuTestsItems;
+            set => SetProperty(ref _menuTestsItems, value);
+        }
 
         public object CurrentContent
         {
@@ -212,35 +247,51 @@ namespace Safety_Wheel.ViewModels
             get => _selectedMainMenuItem;
             set
             {
-                if (SetProperty(ref _selectedMainMenuItem, value))
+                if (value == null)
+                    return;
+
+                if (value.Tag is MainMenuType.TeacherManager)
+                    return;
+
+                if (!SetProperty(ref _selectedMainMenuItem, value))
+                    return;
+
+                TeacherMainPage.GlobalInnerFrame?.Navigate(new Page());
+
+                MenuItems.Clear();
+                MenuDatesItems.Clear();
+                MenuAttemptsItems.Clear();
+                CurrentContent = null;
+                SelectedStudent = null;
+                SelectedDate = null;
+                SelectedAttempt = null;
+
+                if (value.Tag is MainMenuType menuType)
                 {
-                    TeacherMainPage.GlobalInnerFrame?.Navigate(new Page());
-
-                    MenuItems.Clear();
-                    MenuDatesItems.Clear();
-                    MenuAttemptsItems.Clear();
-                    CurrentContent = null;
-                    SelectedStudent = null;
-                    SelectedDate = null;
-                    SelectedAttempt = null;
-
-                    if (value?.Tag is MainMenuType menuType)
+                    switch (menuType)
                     {
-                        switch (menuType)
-                        {
-                            case MainMenuType.TestResults:
-                                LoadStudentsForResults();
-                                break;
-                            case MainMenuType.Statistics:
-                                TeacherMainPage.GlobalInnerFrame?.Navigate(new TeacherStatisticsPage());
-                                LoadStudentsForStatistics();
-                                break;
-                            case MainMenuType.EditCreateTests:                                
-                                LoadSubjectForEdit();
-                                break;
+                        case MainMenuType.TestResults:
+                            AttemptsTableVisible = true;
+                            StatisticTableVisible = false;
+                            LoadStudentsForResults();
+                            break;
 
+                        case MainMenuType.Statistics:
+                            LoadTests();
+                            AttemptsTableVisible = false;
+                            StatisticTableVisible = true;
+                            LoadStudentsForStatistics();
+                            TeacherMainPage.GlobalInnerFrame
+                                ?.Navigate(new TeacherStatisticsPage());
+                            break;
 
-                        }
+                        case MainMenuType.EditCreateTests:
+                            AttemptsTableVisible = false;
+                            StatisticTableVisible = false;
+                            LoadSubjectForEdit();
+                            TeacherMainPage.GlobalInnerFrame
+                                ?.Navigate(new TeacherAllTests(null));
+                            break;
                     }
                 }
             }
@@ -311,6 +362,47 @@ namespace Safety_Wheel.ViewModels
             }
         }
 
+        private void LoadSubjectForEdit()
+        {
+            MenuItems.Clear();
+            CurrentContent = null;
+            _subjectService.GetAll();
+
+            MenuItems.Add(new MenuItemViewModel(this)
+            {
+                Icon = new TextBlock
+                {
+                    Text = "Все",
+                    FontSize = 20,
+                    FontWeight = FontWeights.Bold,
+                    Foreground = Brushes.White,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                },
+                Label = "Общая статистика",
+                ToolTip = "Показать статистику по всем студентам",
+                Tag = null
+            });
+
+            foreach (var sub in _subjectService.Subjects)
+            {
+                MenuItems.Add(new MenuItemViewModel(this)
+                {
+                    Icon = new TextBlock
+                    {
+                        Text = $"{sub.Name}",
+                        FontSize = 20,
+                        FontWeight = FontWeights.Bold,
+                        Foreground = Brushes.White,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center
+                    },
+                    Label = sub.Name,
+                    ToolTip = $"Показать все тесты для {sub.Name}",
+                    Tag = sub
+                });
+            }
+        }
 
         public MenuItemViewModel SelectedStudent
         {
@@ -327,17 +419,23 @@ namespace Safety_Wheel.ViewModels
                 {
                     CurrentStudent = null;
                     CurrentContent = new StatisticsViewModel(null);
-                    TeacherStatisticsPage.DataPageTeacher?.LoadStatisticsForStudent(null);
+                    TeacherStatisticsPage.DataPageTeacher?.LoadStatistics(null);
                     return;
                 }
                 else if (menuType == MainMenuType.EditCreateTests)
                 {
-                    if (value?.Tag is Subject subject)
+                    if (value?.Tag == null)
+                    {
+                        TeacherMainPage.GlobalInnerFrame
+                            ?.Navigate(new TeacherAllTests(null));
+                    }
+                    else if (value?.Tag is Subject subject)
                     {
                         TeacherMainPage.GlobalInnerFrame
                             ?.Navigate(new TeacherAllTests(subject));
                     }
                 }
+
 
                 if (value?.Tag is Student student)
                 {
@@ -350,8 +448,7 @@ namespace Safety_Wheel.ViewModels
 
                         case MainMenuType.Statistics:
                             CurrentStudent = student;
-                            CurrentContent = new StatisticsViewModel(student);
-                            TeacherStatisticsPage.DataPageTeacher?.LoadStatisticsForStudent(student);
+                            TeacherStatisticsPage.DataPageTeacher?.LoadStatistics(student, SelectedTest?.Tag as Test);
                             break;
                     }
                 }
@@ -392,6 +489,26 @@ namespace Safety_Wheel.ViewModels
             }
         }
 
+        public MenuItemViewModel SelectedTest
+        {
+            get => _selectedTest;
+            set
+            {
+                if (!SetProperty(ref _selectedTest, value))
+                    return;
+
+                if (SelectedMainMenuItem?.Tag is not MainMenuType.Statistics)
+                    return;
+
+                var test = value?.Tag as Test;
+                var student = SelectedStudent?.Tag as Student;
+
+                TeacherStatisticsPage.DataPageTeacher
+                    ?.LoadStatistics(student, test);
+            }
+        }
+
+
         public Student CurrentStudent
         {
             get => _currentStudent;
@@ -402,6 +519,21 @@ namespace Safety_Wheel.ViewModels
         {
             get => _selectedDateValue;
             set => SetProperty(ref _selectedDateValue, value);
+        }
+
+        //таблица снизу
+        private bool _attemptsTableVisible = true;
+        private bool _statisticTableVisible = true;
+        public bool AttemptsTableVisible
+        {
+            get => _attemptsTableVisible;
+            set => SetProperty(ref _attemptsTableVisible, value);
+        }
+
+        public bool StatisticTableVisible
+        {
+            get => _statisticTableVisible;
+            set => SetProperty(ref _statisticTableVisible, value);
         }
     }
     public class DateInfo

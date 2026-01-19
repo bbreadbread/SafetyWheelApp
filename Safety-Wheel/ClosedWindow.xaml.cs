@@ -18,9 +18,6 @@ using System.Windows.Shapes;
 
 namespace Safety_Wheel
 {
-    /// <summary>
-    /// Логика взаимодействия для ClosedWindow.xaml
-    /// </summary>
     public partial class ClosedWindow : MetroWindow, INotifyPropertyChanged
     {
         private string _warningText2;

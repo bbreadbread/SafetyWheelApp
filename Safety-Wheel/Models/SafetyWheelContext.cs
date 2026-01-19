@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-
+using System.IO;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 namespace Safety_Wheel.Models;
 
 public partial class SafetyWheelContext : DbContext
@@ -35,9 +36,13 @@ public partial class SafetyWheelContext : DbContext
 
     public virtual DbSet<TestType> TestTypes { get; set; }
 
+
+    string connStr = File.ReadAllText(Path.Combine( AppDomain.CurrentDomain.BaseDirectory, "connection.settings"));
+
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=HOME-PC;Database=safety-wheel;Trusted_Connection=True;TrustServerCertificate=True");
+        => optionsBuilder.UseSqlServer(connStr);
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

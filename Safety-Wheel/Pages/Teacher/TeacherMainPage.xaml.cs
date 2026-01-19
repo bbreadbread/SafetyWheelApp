@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using Safety_Wheel.Models;
 using Safety_Wheel.Services;
 using System.Windows.Media.Animation;
+using static Safety_Wheel.ViewModels.MainViewModel;
 
 namespace Safety_Wheel.Pages.Teacher
 {
@@ -27,7 +28,7 @@ namespace Safety_Wheel.Pages.Teacher
     {
         public Frame InnerFrame => this.FrameTeacher;
 
-        public static Frame GlobalInnerFrame;
+        public static Frame GlobalInnerFrame = new();
 
         public enum ViewTypes
         {
@@ -44,11 +45,11 @@ namespace Safety_Wheel.Pages.Teacher
             get { return _Title; }
             set { _Title = value; }
         }
-
+        int _menuItemsCount;
         public TeacherMainPage(int menuItemsCount = 0)
         {
+            _menuItemsCount = menuItemsCount;
             InitializeComponent();
-            DataContext = new MainViewModel(menuItemsCount);
             GlobalInnerFrame = FrameTeacher;
         }
 
@@ -64,5 +65,34 @@ namespace Safety_Wheel.Pages.Teacher
             
         }
 
+        private void DataGridRow_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is DataGridRow row && !row.IsSelected)
+            {
+                row.IsSelected = true;
+            }
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            DataContext = new MainViewModel(_menuItemsCount);
+        }
+
+        private void HamburgerMenu_ItemInvoked(object sender, HamburgerMenuItemInvokedEventArgs e)
+        {
+            if (!e.IsItemOptions)
+                return;
+
+            if (e.InvokedItem is MenuItemViewModel item &&
+                item.Tag is MainMenuType.TeacherManager)
+            {
+                var menu = sender as MahApps.Metro.Controls.HamburgerMenu;
+
+                if (Application.Current.MainWindow is MainWindow mw)
+                {
+                    mw.TeacherManagerFlyout.IsOpen = true;
+                }
+            }
+        }
     }
 }

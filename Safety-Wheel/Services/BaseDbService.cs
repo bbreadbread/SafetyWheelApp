@@ -7,14 +7,18 @@ using System.Threading.Tasks;
 
 namespace Safety_Wheel.Services
 {
-    internal class BaseDbService
+    public class BaseDbService
     {
         private static BaseDbService? instance;
-        private SafetyWheelContext context;
-        public SafetyWheelContext Context => context;
+        private SafetyWheelContext _context;
+        public SafetyWheelContext Context => _context;
         private BaseDbService()
         {
-            context = new SafetyWheelContext();
+            _context = new SafetyWheelContext();
+        }
+        public void SetContext(SafetyWheelContext context)
+        {
+            _context = context;
         }
         public static BaseDbService Instance
         {

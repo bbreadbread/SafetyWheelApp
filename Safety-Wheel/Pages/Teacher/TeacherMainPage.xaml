@@ -1,4 +1,14 @@
-﻿<Page x:Class="Safety_Wheel.Pages.Teacher.TeacherMainPage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" xmlns:viewModels="clr-namespace:Safety_Wheel.ViewModels" xmlns:core="clr-namespace:Safety_Wheel.Converters" xmlns:views="clr-namespace:Safety_Wheel.Pages.Teacher" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" Title="HamburgerMenuPage">
+﻿<Page x:Class="Safety_Wheel.Pages.Teacher.TeacherMainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+      xmlns:viewModels="clr-namespace:Safety_Wheel.ViewModels" 
+      xmlns:core="clr-namespace:Safety_Wheel.Converters"
+      xmlns:views="clr-namespace:Safety_Wheel.Pages.Teacher"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      Title="HamburgerMenuPage"
+      Loaded="Page_Loaded">
     <!--xmlns:localViews="clr-namespace:Safety_Wheel.Views" <Page.DataContext> <viewModels:MainViewModel /> </Page.DataContext>-->
     <Border Background="{StaticResource White}">
         <Grid>
@@ -13,6 +23,7 @@
                 <!-- this is the template for the items (options too) -->
                 <core:MenuTypeToSingleVisibilityConverter x:Key="MenuTypeToSingleVisibilityConverter" />
                 <core:MenuTypeToMultiVisibilityConverter x:Key="MenuTypeToMultiVisibilityConverter" />
+                <core:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
                 <DataTemplate x:Key="MenuItemTemplate" DataType="{x:Type viewModels:MenuItemViewModel}">
                     <Grid x:Name="RootGrid" Height="48" Background="Transparent">
                         <Grid.ColumnDefinitions>
@@ -37,21 +48,32 @@
             <mah:HamburgerMenu Grid.Column="0"
                                x:Name="MainMenuControl" 
                                DisplayMode="CompactInline" 
-                               IsPaneOpen="False" ItemTemplate="{StaticResource MenuItemTemplate}" 
-                               ItemsSource="{Binding MainMenuItems}" 
+                               IsPaneOpen="False" 
+                               
+                               
+                               ItemsSource="{Binding MainMenuItems}"
+                               OptionsItemsSource="{Binding MenuOptionItems}"
+                               OptionsItemTemplate="{StaticResource MenuItemTemplate}"
+                               ItemTemplate="{StaticResource MenuItemTemplate}" 
+                               ItemInvoked="HamburgerMenu_ItemInvoked"
+                               
                                SelectedItem="{Binding SelectedMainMenuItem, Mode=TwoWay}" 
-                               SelectedIndex="2"
+                               SelectedIndex="0"
                                HamburgerVisibility="Collapsed" 
                                Style="{StaticResource MainMenuStyle}" 
                                DockPanel.Dock="Left"/>
+                               
             <mah:HamburgerMenu Grid.Column="1"
                                x:Name="PeopleMenuControl"
                                DisplayMode="CompactInline" 
                                IsPaneOpen="False" 
                                ItemTemplate="{StaticResource MenuItemTemplate}" 
-                               ItemsSource="{Binding MenuItems}" SelectedItem="{Binding SelectedStudent, Mode=TwoWay}"
-                               OptionsItemsSource="{Binding MenuOptionItems}" SelectedIndex="0" HamburgerVisibility="Collapsed" 
+                               ItemsSource="{Binding MenuItems}"
+                               SelectedItem="{Binding SelectedStudent, Mode=TwoWay}"
+                               SelectedIndex="0"
+                               HamburgerVisibility="Collapsed" 
                                Style="{StaticResource PeoplesMenu}"/>
+
             <mah:HamburgerMenu x:Name="DatesMenuControl" Grid.Column="2"
                                ItemInvoked="DatesMenuControl_ItemInvoked"
                                DisplayMode="CompactInline" 
@@ -68,29 +90,6 @@
                     </MultiBinding>
                 </mah:HamburgerMenu.Visibility>
             </mah:HamburgerMenu>
-            <mah:HamburgerMenu 
-                Grid.Column="3" 
-                x:Name="AttemptsMenuControl" 
-                DisplayMode="Overlay" 
-                HamburgerWidth="48" 
-                IsPaneOpen="True" 
-                HamburgerVisibility="Collapsed" 
-                ItemTemplate="{StaticResource MenuItemTemplate}" 
-                ItemsSource="{Binding MenuAttemptsItems}" 
-                SelectedItem="{Binding SelectedAttempt, Mode=TwoWay}" SelectedIndex="0"
-                Style="{StaticResource AttemptsMenu}">
-                <mah:HamburgerMenu.Visibility>
-                    <MultiBinding Converter="{StaticResource MenuTypeToMultiVisibilityConverter}" ConverterParameter="Attempts">
-                        <Binding Path="SelectedMainMenuItem.Tag"/>
-                        <Binding Path="MenuAttemptsItems.Count"/>
-                    </MultiBinding>
-                </mah:HamburgerMenu.Visibility>
-                <mah:HamburgerMenu.ContentTemplate>
-                    <DataTemplate>
-                        <Grid/>
-                    </DataTemplate>
-                </mah:HamburgerMenu.ContentTemplate>
-            </mah:HamburgerMenu>
             <Grid Grid.Column="3">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -98,7 +97,86 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Frame x:Name="FrameTeacher" Grid.Column="1" NavigationUIVisibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Frame x:Name="FrameTeacher"
+                           Grid.Column="1" 
+                           Grid.Row="0"
+                           NavigationUIVisibility="Hidden" 
+                           HorizontalAlignment="Stretch" 
+                           VerticalAlignment="Top"/>
+
+                    <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+                              Height="220"
+                              ItemsSource="{Binding MenuAttemptsItems}"
+                              SelectedItem="{Binding SelectedAttempt}"
+                              SelectionUnit="FullRow"
+                              SelectionMode="Single"
+                              AutoGenerateColumns="False"
+                              HeadersVisibility="Column"
+                              Visibility="{Binding AttemptsTableVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <EventSetter Event="PreviewMouseLeftButtonDown"
+                                             Handler="DataGridRow_PreviewMouseLeftButtonDown"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#334A90E2"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Время"
+                                        Binding="{Binding Tag.StartedAt,
+                                                  StringFormat=HH:mm}" />
+
+                            <DataGridTextColumn Header="Результат"
+                                        Binding="{Binding Tag.Score}" />
+
+                            <DataGridTextColumn Header="Тест"
+                                        Binding="{Binding Tag.Test.Name}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+                              Height="220"
+                              IsReadOnly="True"
+                              ItemsSource="{Binding MenuTestsItems}"
+                              SelectedItem="{Binding SelectedTest}"
+                              SelectionUnit="FullRow"
+                              SelectionMode="Single"
+                              AutoGenerateColumns="False"
+                              HeadersVisibility="Column"
+                              Visibility="{Binding StatisticTableVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <EventSetter Event="PreviewMouseLeftButtonDown"
+                         Handler="DataGridRow_PreviewMouseLeftButtonDown"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#334A90E2"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Название теста"
+                                                Binding="{Binding Tag.Name, StringFormat=HH:mm}" />
+                            <DataGridTextColumn Header="Предмет"
+                                                Binding="{Binding Tag.Subject.Name}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </Grid>
             </Grid>
         </Grid>

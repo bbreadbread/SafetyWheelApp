@@ -24,11 +24,11 @@ namespace Safety_Wheel.Pages.Student
     /// </summary>
     public partial class StudSelectedTestsPage : Page
     {
-        public static string TypeDiscipline { get; set; }
+        public static string TypeDiscipline { get; set; } = string.Empty;
         public int TypeTest { get; set; } = 0;
 
         TestService _testService = new();
-        private Button _selectedButton;
+        private Button? _selectedButton;
         public StudSelectedTestsPage(string typeDiscipline)
         {
             TypeDiscipline = typeDiscipline;
@@ -39,6 +39,7 @@ namespace Safety_Wheel.Pages.Student
         }
         private void LoadTests()
         {
+            _testService.GetAll();
             _testService.GetTestsBySubjectName(TypeDiscipline);
 
             GeneratedOptionsPanel.Children.Clear();
@@ -46,8 +47,11 @@ namespace Safety_Wheel.Pages.Student
             int counter = 1;
             foreach (var test in _testService.Tests)
             {
-                CreateTestOptionElement(test, counter);
-                counter++;
+                if (test.IsPublic == true)
+                {
+                    CreateTestOptionElement(test, counter);
+                    counter++;
+                }
             }
         }
 
@@ -80,7 +84,7 @@ namespace Safety_Wheel.Pages.Student
                     FontWeight = FontWeights.Bold,
                     TextAlignment = TextAlignment.Left,
                     TextWrapping = TextWrapping.Wrap,
-                    MaxWidth = 300 
+                    MaxWidth = 300
                 }
 
             };
@@ -122,9 +126,9 @@ namespace Safety_Wheel.Pages.Student
 
             centerContainer.Child = iconsContainer;
 
-            
-            dockPanel.Children.Add(leftContainer);  
-            dockPanel.Children.Add(playBtn);        
+
+            dockPanel.Children.Add(leftContainer);
+            dockPanel.Children.Add(playBtn);
             dockPanel.Children.Add(centerContainer);
             mainButton.Content = dockPanel;
 
@@ -150,7 +154,7 @@ namespace Safety_Wheel.Pages.Student
                 }
             };
             border.Child = mainButton;
-            
+
             GeneratedOptionsPanel.Children.Add(border);
         }
 
@@ -277,11 +281,11 @@ namespace Safety_Wheel.Pages.Student
             int score = attempt.Score.Value;
             double percentage = (double)score / maxScore * 100;
 
-            if (percentage >= 95) 
+            if (percentage >= 95)
             {
                 return Brushes.Green;
             }
-            else if (percentage >= 70) 
+            else if (percentage >= 70)
             {
                 return Brushes.Gold;
             }

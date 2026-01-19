@@ -35,10 +35,7 @@ namespace Safety_Wheel.ViewModels
         private readonly QuestionService _questionService = new();
         private readonly OptionService _optionService = new();
 
-        public TeacherCreateTestViewModel( )
-        {
-
-        }
+        public TeacherCreateTestViewModel() { }
 
         public TeacherCreateTestViewModel(Test? test = null)
         {
@@ -82,7 +79,7 @@ namespace Safety_Wheel.ViewModels
                 _testService.Update(Test);
 
                 var dbQuestions = _questionService
-                    .GetQoestiosForCurrentTest(Test.Id)
+                    .GetQuestiosForCurrentTest(Test.Id)
                     .ToList();
 
                 var vmQuestions = Questions
@@ -169,7 +166,7 @@ namespace Safety_Wheel.ViewModels
 
             _testService.Add(Test, Questions.Count(q => !q.IsGhost));
 
-            
+
 
             foreach (var q in Questions.Where(q => !q.IsGhost))
             {
@@ -209,7 +206,7 @@ namespace Safety_Wheel.ViewModels
 
             Questions.Clear();
 
-            var questions = _questionService.GetQoestiosForCurrentTest(test.Id);
+            var questions = _questionService.GetQuestiosForCurrentTest(test.Id);
 
             foreach (var q in questions)
             {
@@ -217,6 +214,11 @@ namespace Safety_Wheel.ViewModels
                 {
                     NewQuestion = q
                 };
+
+                if (!string.IsNullOrEmpty(q.PicturePath))
+                    qvm.PreviewImagePath = q.PicturePath;
+
+
 
                 qvm.Options.Clear();
 

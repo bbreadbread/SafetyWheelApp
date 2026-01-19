@@ -20,40 +20,46 @@ namespace Safety_Wheel.Pages.Teacher
         public TeacherStatisticsPage()
         {
             InitializeComponent();
-            DataPageTeacher = this;
         }
 
-        public void LoadStatisticsForStudent(Models.Student student)
+        public void LoadStatistics(Models.Student student = null, Test test = null)
         {
-            bool isReady = student == null;
-
-            StudentTitle.Text = isReady
-                ? "Общая статистика по всем студентам"
-                : $"Статистика студента: {student.Name}";
-
             _testService.GetAll(null, CurrentUser.Id);
 
-            var testStats = new List<TestStats>();            
-            var AllTime = new List<OverallTimeData>();
+            StudentTitle.Text = student == null
+                    ? "Общая статистика"
+                    : $"Статистика студента: {student.Name}";
 
-            foreach (var test in _testService.Tests)
+            var testStats = new List<TestStats>();
+            var allTime = new List<OverallTimeData>();
+
+            IEnumerable<Test> testsToProcess =
+                test != null
+                    ? new[] { test }
+                    : _testService.Tests;
+
+            foreach (var t in testsToProcess)
             {
-                var stats = isReady
-                    ? GetTestStatsOverall(test)
-                    : GetTestStats(test, student);
+                var stats = student == null
+                    ? GetTestStatsOverall(t)
+                    : GetTestStats(t, student);
+
+                if (stats == null)
+                    continue;
 
                 testStats.Add(stats);
 
-
-                AllTime.Add(new OverallTimeData
+                allTime.Add(new OverallTimeData
                 {
-                    TestName =  $"{test.Name}",
+                    TestName = t.Name,
                     AverageDuration = stats.AverageDuration
                 });
             }
+
             TestsItemsControl.ItemsSource = testStats;
-            DrawOverallTimeChart(AllTime);
+            DrawOverallTimeChart(allTime);
         }
+
 
         private TestStats GetTestStatsOverall(Test test)
         {
@@ -238,12 +244,14 @@ namespace Safety_Wheel.Pages.Teacher
 
         private void TeacherStatisticsPage_Loaded(object sender, RoutedEventArgs e)
         {
+            DataPageTeacher = this;
+
             if (_isInitialized)
                 return;
 
             _isInitialized = true;
 
-            LoadStatisticsForStudent(null);
+            LoadStatistics(null);
         }
     }
 

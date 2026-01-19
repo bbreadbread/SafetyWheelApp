@@ -23,12 +23,12 @@ namespace Safety_Wheel.Pages.Teacher
     /// </summary>
     public partial class TeacherAllTests : UserControl
     {
-        public TeacherAllTests(Subject subject)
+        Subject _subject;
+        public TeacherAllTests(Subject subject = null)
         {
+            _subject = subject;
             InitializeComponent();
-            DataContext = new TeacherAllTestViewModel(subject);
         }
-
         private void RemoveTest_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
@@ -42,22 +42,38 @@ namespace Safety_Wheel.Pages.Teacher
         }
 
 
-        private void Card_Click(object sender, MouseButtonEventArgs e)
+        private async void Card_Click(object sender, MouseButtonEventArgs e)
         {
-            if (sender is Border border &&
-                border.Tag is TestListItemViewModel vm)
+            if (sender is not Border border ||
+                border.Tag is not TestListItemViewModel vm ||
+                DataContext is not TeacherAllTestViewModel dm)
+                return;
+
+            dm.IsLoading = true;
+
+            if (vm.IsCreateCard)
             {
-                if (vm.IsCreateCard)
-                {
-                    TeacherMainPage.GlobalInnerFrame
-                        ?.Navigate(new TeacherCreateTestsPage(null));
-                }
-                else if (vm.Test != null)
-                {
-                    TeacherMainPage.GlobalInnerFrame
-                        ?.Navigate(new TeacherCreateTestsPage(vm.Test));
-                }
+                TeacherMainPage.GlobalInnerFrame
+                    ?.Navigate(new TeacherCreateTestsPage(null));
+                return;
             }
+
+            if (vm.Test == null)
+                return;
+
+
+
+            await Dispatcher.InvokeAsync(() => { }, System.Windows.Threading.DispatcherPriority.Render);
+
+            TeacherMainPage.GlobalInnerFrame
+                ?.Navigate(new TeacherCreateTestsPage(vm.Test));
+
+            dm.IsLoading = false;
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            DataContext = new TeacherAllTestViewModel(_subject);
         }
     }
 }

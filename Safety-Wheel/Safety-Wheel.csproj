@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="connection.settings" />
     <None Remove="Images\add_picture_icon.png" />
     <None Remove="Images\back_logo.png" />
     <None Remove="Images\comments_icon.png" />
@@ -205,6 +206,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="connection.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>connection.Designer.cs</LastGenOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Images\add_picture_icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

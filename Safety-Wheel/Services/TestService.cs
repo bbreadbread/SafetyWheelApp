@@ -58,6 +58,7 @@ namespace Safety_Wheel.Services
             }
         }
 
+
         public void Remove(Test test)
         {
             if (Tests.Contains(test))
@@ -100,7 +101,7 @@ namespace Safety_Wheel.Services
                 _db.Remove(test);
                 _db.Tests.Remove(test);
                 _db.SaveChanges();
-            }            
+            }
         }
 
         public void Update(Test test)
@@ -119,11 +120,11 @@ namespace Safety_Wheel.Services
         public void GetTestsBySubjectId(int subjectId, int? teacherId = null)
         {
             List<Test> tests;
-            if (teacherId != null) 
-            { 
-                tests = Tests.Where(t => t.TeacherId == teacherId).ToList();
+            if (teacherId != null)
+            {
+                tests = Tests.Where(t => t.TeacherId == teacherId && t.SubjectId == subjectId).ToList();
             }
-            
+            else 
             tests = Tests
                 .Where(t => t.SubjectId == subjectId)
                 .ToList();
@@ -142,6 +143,15 @@ namespace Safety_Wheel.Services
                 .Where(t => t.Id == testId)
                 .First();
         }
+
+        public async Task<Test> GetTestByIdAsync(int testId)
+        {
+            return await _db.Tests
+                .Include(t => t.Subject)
+                .Include(t => t.Teacher)
+                .FirstAsync(t => t.Id == testId);
+        }
+
 
         public Test GetLastTest()
         {
@@ -164,7 +174,7 @@ namespace Safety_Wheel.Services
                 Tests.Clear();
             }
         }
-        
+
 
     }
 }

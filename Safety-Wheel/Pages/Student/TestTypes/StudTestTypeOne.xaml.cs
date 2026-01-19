@@ -43,7 +43,7 @@ namespace Safety_Wheel.Pages.Student.TestTypes
 
             if (!string.IsNullOrEmpty(_question.PicturePath))
             {
-                if (_question.PicturePath != "//")
+                if (_question.PicturePath != null)
                 {
                     PathImage = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _question.PicturePath);
                 }
@@ -242,7 +242,11 @@ namespace Safety_Wheel.Pages.Student.TestTypes
                 if (StudTest._canClosed == false)
                     if (s is Button clickedButton)
                     {
-                        clickedButton.Style = (Style)FindResource("DownOptionButton");
+                        if (clickedButton.Style == (Style)FindResource("DownOptionButton")) clickedButton.Style = (Style)FindResource("OptionButton");
+                        else clickedButton.Style = (Style)FindResource("DownOptionButton");
+
+
+
 
                         if (clickedButton.Tag is string tagValue && int.TryParse(tagValue, out int optionId))
                         {

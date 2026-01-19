@@ -2,6 +2,9 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.IO;
 
 namespace Safety_Wheel.ViewModels
 {
@@ -21,6 +24,14 @@ namespace Safety_Wheel.ViewModels
 
         private readonly Action _onActivated;
 
+        private string? _previewImagePath;
+        public string? PreviewImagePath
+        {
+            get => _previewImagePath;
+            set => SetProperty(ref _previewImagePath, value);
+        }
+
+
         public string Text
         {
             get => NewQuestion.TestQuest ?? "";
@@ -33,6 +44,17 @@ namespace Safety_Wheel.ViewModels
                 _onActivated?.Invoke();
             }
         }
+        public string Comments
+        {
+            get => NewQuestion.Comments ?? "";
+            set
+            {
+                NewQuestion.Comments = value;
+                OnPropertyChanged();
+
+                _onActivated?.Invoke();
+            }
+        }
 
         public bool IsMultiImage
         {
@@ -41,8 +63,9 @@ namespace Safety_Wheel.ViewModels
             {
                 NewQuestion.QuestionType = value ? 2 : 1;
 
-                if (value)
-                    NewQuestion.PicturePath = "//";
+
+                if (!value && string.IsNullOrEmpty(PreviewImagePath))
+                    PreviewImagePath = PicturePath;
 
                 ResetOptions();
                 OnPropertyChanged();
@@ -54,7 +77,7 @@ namespace Safety_Wheel.ViewModels
 
         public string PicturePath
         {
-            get => NewQuestion.PicturePath ?? "";
+            get => NewQuestion.PicturePath ?? null;
             set
             {
                 NewQuestion.PicturePath = value;
@@ -131,6 +154,7 @@ namespace Safety_Wheel.ViewModels
         public void SetQuestionImage(string path)
         {
             PicturePath = path;
+            PreviewImagePath = path;
         }
     }
 }

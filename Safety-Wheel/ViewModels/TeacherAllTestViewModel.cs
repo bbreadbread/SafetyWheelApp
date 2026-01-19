@@ -14,9 +14,7 @@ namespace Safety_Wheel.ViewModels
 
         public ObservableCollection<TestListItemViewModel> Tests { get; } = new ObservableCollection<TestListItemViewModel>();
 
-
-
-        public TeacherAllTestViewModel(Subject subject)
+        public TeacherAllTestViewModel(Subject? subject = null)
         {
             _subject = subject;
             LoadTests();
@@ -26,13 +24,21 @@ namespace Safety_Wheel.ViewModels
         {
             Tests.Clear();
 
-            _testService.GetTestsBySubjectId(_subject.Id, CurrentUser.Id);
+            if (_subject == null)
+            {
+                _testService.GetAll(null, CurrentUser.Id);
+            }
+            else
+            {
+                _testService.GetTestsBySubjectId(_subject.Id, CurrentUser.Id);
+            }
 
             foreach (var test in _testService.Tests)
-                Tests.Add(new TestListItemViewModel(test));
+                Tests.Add(new TestListItemViewModel(test, _testService));
 
             Tests.Add(new TestListItemViewModel());
         }
+
 
         public void RemoveTest(Test test)
         {
@@ -50,6 +56,17 @@ namespace Safety_Wheel.ViewModels
             var item = Tests.FirstOrDefault(x => x.Test == test);
             if (item != null)
                 Tests.Remove(item);
+        }
+
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged();
+            }
         }
     }
 }

@@ -1,16 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
-using System.Windows;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Data;
 
 namespace Safety_Wheel.Converters
 {
-    public class InverseBoolToVisibilityConverter : IValueConverter
+    public class IndexPlusOneConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            => value is bool b && b ? Visibility.Collapsed : Visibility.Visible;
+            => value is int i ? i + 1 : 0;
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            => throw new NotImplementedException();
+        {
+            throw new NotImplementedException();
+        }
     }
+
 }

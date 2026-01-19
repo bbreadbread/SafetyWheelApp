@@ -13,6 +13,7 @@ public class Test : ObservableObject
     private int? _penaltyMax;
     private int? _maxScore;
     private DateTime? _dateOfCreating;
+    private bool? _isPublic;
     private ObservableCollection<Question> _questions = new();
     private Subject? _subject;
     private Teacher? _teacher;
@@ -56,6 +57,12 @@ public class Test : ObservableObject
     {
         get => _dateOfCreating;
         set => SetProperty(ref _dateOfCreating, value);
+    }
+
+    public bool? IsPublic
+    {
+        get => _isPublic;
+        set => SetProperty(ref _isPublic, value);
     }
     public virtual ICollection<Attempt> Attempts { get; set; } = new List<Attempt>();
     public virtual ObservableCollection<Question> Questions

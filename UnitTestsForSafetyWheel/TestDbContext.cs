@@ -1,18 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
+using Safety_Wheel.Models;
+using Safety_Wheel.Services;
+using System;
+
 
 namespace UnitTestsForSafetyWheel
 {
-    private SafetyWheelContext CreateDbContext()
+    public static class TestDbContext
     {
-        var options = new DbContextOptionsBuilder<SafetyWheelContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
+        public static SafetyWheelContext CreateDbContext()
+        {
+            var options = new DbContextOptionsBuilder<SafetyWheelContext>()
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
+                .Options;
 
-        return new SafetyWheelContext(options);
+            return new SafetyWheelContext(options);
+        }
     }
-
 }
