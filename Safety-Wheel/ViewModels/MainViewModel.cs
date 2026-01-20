@@ -10,6 +10,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Safety_Wheel.Pages.Student;
+using System.Windows.Input;
+using HarfBuzzSharp;
 
 namespace Safety_Wheel.ViewModels
 {
@@ -18,6 +20,7 @@ namespace Safety_Wheel.ViewModels
 
         private ObservableCollection<MenuItemViewModel> _mainMenuItems;
         private ObservableCollection<MenuItemViewModel> _menuOptionItems;
+        private ObservableCollection<MenuItemViewModel> _menuOptionDateItems;
 
         private ObservableCollection<MenuItemViewModel> _menuItems;
         private ObservableCollection<MenuItemViewModel> _menuDatesItems;
@@ -44,20 +47,46 @@ namespace Safety_Wheel.ViewModels
             TestResults,
             Statistics,
             EditCreateTests,
-            TeacherManager
+            TeacherManager,
+            MonthFilter
         }
 
-        public MainViewModel(int count)
+        public MainViewModel()
         {
-            _studentService.GetAllStudents(CurrentUser.Id);
+            ApplyMonthFilterCommand = new RelayCommand2(ApplyMonthFilter);
+            ResetMonthFilterCommand = new RelayCommand2(ResetMonthFilter);
+
             CreateMainMenuItems();
             CreateMenuItems();
         }
+
+        public void InitAfterLogin()
+        {
+            _studentService.GetAllStudents(CurrentUser.Id);
+        }
+        public void ReloadStudents()
+        {
+            _studentService.ReloadStudents(CurrentUser.Id);
+
+            if (SelectedMainMenuItem?.Tag is MainMenuType.TestResults)
+                LoadStudentsForResults();
+
+            if (SelectedMainMenuItem?.Tag is MainMenuType.Statistics)
+                LoadStudentsForStatistics();
+        }
+
 
         public void CreateMainMenuItems()
         {
             MainMenuItems = new ObservableCollection<MenuItemViewModel>
             {
+                 new MenuItemViewModel(this)
+                {
+                    Icon = new PackIconMaterial { Kind = PackIconMaterialKind.ChartLine },
+                    Label = "Статистика",
+                    ToolTip = "Статистика по тестам и студентам",
+                    Tag = MainMenuType.Statistics
+                 },
                 new MenuItemViewModel(this)
                 {
                     Icon = new PackIconMaterial { Kind = PackIconMaterialKind.ChartBar },
@@ -71,14 +100,8 @@ namespace Safety_Wheel.ViewModels
                     Label = "Создание тестов",
                     ToolTip = "Создание и редактирование тестов",
                     Tag = MainMenuType.EditCreateTests
-                },
-                new MenuItemViewModel(this)
-                {
-                    Icon = new PackIconMaterial { Kind = PackIconMaterialKind.ChartLine },
-                    Label = "Статистика",
-                    ToolTip = "Статистика по тестам и студентам",
-                    Tag = MainMenuType.Statistics
                 }
+               
             };
 
             MenuOptionItems = new ObservableCollection<MenuItemViewModel>
@@ -100,6 +123,7 @@ namespace Safety_Wheel.ViewModels
             MenuDatesItems = new ObservableCollection<MenuItemViewModel> { };
             MenuAttemptsItems = new ObservableCollection<MenuItemViewModel> { };
             MenuTestsItems = new ObservableCollection<MenuItemViewModel> { };
+            MenuOptionDateItems = new ObservableCollection<MenuItemViewModel> { };
         }
 
         private void LoadStudentDates(Student student)
@@ -109,6 +133,7 @@ namespace Safety_Wheel.ViewModels
             MenuDatesItems.Clear();
             MenuAttemptsItems.Clear();
             CurrentContent = null;
+            MenuOptionDateItems.Clear();
 
             List<DateTime> list = _attemptService.GetUniqueAttemptDates(student.Id);
 
@@ -137,7 +162,67 @@ namespace Safety_Wheel.ViewModels
                 MenuDatesItems.Add(dateItem);
             }
 
+            var q = new MenuItemViewModel(this)
+            {
+                Icon = new PackIconMaterial
+                {
+                    Kind = PackIconMaterialKind.PlusCircleOutline,
+                    Foreground = Brushes.White
+                },
+                Label = "Дополнительное действие",
+                ToolTip = "Нажмите для выполнения действия",
+                Tag = MainMenuType.MonthFilter
+            };
+
+            MenuOptionDateItems.Add(q);
+
             SelectedDate = null;
+        }
+
+        private void LoadStudentDates(Student student, int? year, int? month)
+        {
+            if (student == null) return;
+
+            MenuDatesItems.Clear();
+            MenuAttemptsItems.Clear();
+            CurrentContent = null;
+
+            var dates = _attemptService
+                .GetUniqueAttemptDates(student.Id)
+                .AsEnumerable();
+
+            if (year.HasValue)
+                dates = dates.Where(d => d.Year == year.Value);
+
+            if (month.HasValue)
+                dates = dates.Where(d => d.Month == month.Value);
+
+            foreach (var date in dates.OrderBy(d => d))
+            {
+                MenuDatesItems.Add(new MenuItemViewModel(this)
+                {
+                    Icon = new TextBlock
+                    {
+                        Text = $"{date:dd.MM}",
+                        FontSize = 20,
+                        FontWeight = FontWeights.Bold,
+                        Foreground = Brushes.White
+                    },
+                    Label = $"Дата: {date:dd.MM.yyyy}",
+                    Tag = new DateInfo
+                    {
+                        Date = date,
+                        Student = student
+                    }
+                });
+            }
+
+            MenuDatesItems.Add(new MenuItemViewModel(this)
+            {
+                Icon = new PackIconMaterial { Kind = PackIconMaterialKind.Filter },
+                Label = "Фильтр по месяцу",
+                Tag = MainMenuType.MonthFilter
+            });
         }
 
         private void LoadDateAttempts(DateInfo dateInfo)
@@ -168,6 +253,8 @@ namespace Safety_Wheel.ViewModels
                 };
 
                 MenuAttemptsItems.Add(attemptItem);
+
+
             }
 
             SelectedAttempt = null;
@@ -206,6 +293,11 @@ namespace Safety_Wheel.ViewModels
         {
             get => _menuOptionItems;
             set => SetProperty(ref _menuOptionItems, value);
+        }
+        public ObservableCollection<MenuItemViewModel> MenuOptionDateItems
+        {
+            get => _menuOptionDateItems;
+            set => SetProperty(ref _menuOptionDateItems, value);
         }
         public ObservableCollection<MenuItemViewModel> MainMenuItems
         {
@@ -281,16 +373,14 @@ namespace Safety_Wheel.ViewModels
                             AttemptsTableVisible = false;
                             StatisticTableVisible = true;
                             LoadStudentsForStatistics();
-                            TeacherMainPage.GlobalInnerFrame
-                                ?.Navigate(new TeacherStatisticsPage());
+                            TeacherMainPage.GlobalInnerFrame?.Navigate(new TeacherStatisticsPage());
                             break;
 
                         case MainMenuType.EditCreateTests:
                             AttemptsTableVisible = false;
                             StatisticTableVisible = false;
                             LoadSubjectForEdit();
-                            TeacherMainPage.GlobalInnerFrame
-                                ?.Navigate(new TeacherAllTests(null));
+                            TeacherMainPage.GlobalInnerFrame?.Navigate(new TeacherAllTests(null));
                             break;
                     }
                 }
@@ -439,6 +529,7 @@ namespace Safety_Wheel.ViewModels
 
                 if (value?.Tag is Student student)
                 {
+                    
                     switch (menuType)
                     {
                         case MainMenuType.TestResults:
@@ -461,7 +552,16 @@ namespace Safety_Wheel.ViewModels
             get => _selectedDate;
             set
             {
-                if (SetProperty(ref _selectedDate, value) && value?.Tag is DateInfo dateInfo)
+                if (!SetProperty(ref _selectedDate, value))
+                    return;
+
+                if (value?.Tag is MainMenuType.MonthFilter)
+                {
+
+                    return;
+                }
+
+                if (value?.Tag is DateInfo dateInfo)
                 {
                     LoadDateAttempts(dateInfo);
                     SelectedDateValue = dateInfo.Date;
@@ -535,10 +635,64 @@ namespace Safety_Wheel.ViewModels
             get => _statisticTableVisible;
             set => SetProperty(ref _statisticTableVisible, value);
         }
+
+        //месяцы
+        private DateTime? _selectedMonthDate;
+        public DateTime? SelectedMonthDate
+        {
+            get => _selectedMonthDate;
+            set => SetProperty(ref _selectedMonthDate, value);
+        }
+
+
+        public ICommand ApplyMonthFilterCommand { get; }
+        public ICommand ResetMonthFilterCommand { get; }
+        public void ApplyMonthFilter()
+        {
+            if (_currentStudent == null) return;
+            if (SelectedMonthDate == null) return;
+
+            LoadStudentDates(
+                _currentStudent,
+                SelectedMonthDate.Value.Year,
+                SelectedMonthDate.Value.Month
+            );
+        }
+
+        public void ResetMonthFilter()
+        {
+            if (_currentStudent == null) return;
+
+            SelectedMonthDate = null;
+            LoadStudentDates(_currentStudent);
+        }
+
+
     }
     public class DateInfo
     {
         public DateTime Date { get; set; }
         public Student Student { get; set; }
     }
+
+    public class RelayCommand2 : ICommand
+    {
+        private readonly Action _execute;
+        private readonly Func<bool> _canExecute;
+
+        public RelayCommand2(Action execute, Func<bool> canExecute = null)
+        {
+            _execute = execute;
+            _canExecute = canExecute;
+        }
+
+        public bool CanExecute(object parameter)
+            => _canExecute == null || _canExecute();
+
+        public void Execute(object parameter)
+            => _execute();
+
+        public event EventHandler CanExecuteChanged;
+    }
+
 }

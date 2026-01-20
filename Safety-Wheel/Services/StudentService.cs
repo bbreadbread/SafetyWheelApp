@@ -29,6 +29,7 @@ namespace Safety_Wheel.Services
                 TeachersId = student.TeachersId
             };
             _db.Add(_student);
+            Students.Add(_student);
             Commit();
         }
 
@@ -52,6 +53,18 @@ namespace Safety_Wheel.Services
             }
         }
 
+        public void ReloadStudents(int teacherId)
+        {
+            var stud  = _db.Students
+                         .Where(s => s.TeachersId == teacherId)
+                         .ToList();
+            Students.Clear();
+            foreach (var student in stud)
+            {
+                Students.Add(student);
+            }
+        }
+
         public Student? GetCurrentStudent(int? studentId = null)
         {
             if (!studentId.HasValue) return null;
@@ -62,10 +75,10 @@ namespace Safety_Wheel.Services
 
         public void Remove(Student student)
         {
-            _db.Remove(student);
-            if (Commit() > 0)
-                if (Students.Contains(student))
-                    Students.Remove(student);
+                _db.Remove(student);
+                if (Commit() > 0)
+                    if (Students.Contains(student))
+                        Students.Remove(student);
         }
 
         public void Update(Student student)

@@ -20,6 +20,7 @@ namespace Safety_Wheel.Pages.Teacher
         public TeacherStatisticsPage()
         {
             InitializeComponent();
+            LoadStatistics();
         }
 
         public void LoadStatistics(Models.Student student = null, Test test = null)
@@ -218,14 +219,23 @@ namespace Safety_Wheel.Pages.Teacher
                 return;
             }
 
-            plot.Plot.Add.Bars(
-                stats.QuestionNumbers.ToArray(),
-                stats.SuccessRates.ToArray()
-            );
+           
 
             plot.Plot.Title("Динамика успеваемости");
             plot.Plot.XLabel("Номер вопроса");
             plot.Plot.YLabel("Процент правильных (%)");
+
+            if (!stats.QuestionNumbers.Any())
+            {
+                plot.Plot.Title("Нет данных для отображения");
+                plot.Refresh();
+                return;
+            }
+
+            plot.Plot.Add.Bars(
+                stats.QuestionNumbers.ToArray(),
+                stats.SuccessRates.ToArray()
+            );
 
             double minX = stats.QuestionNumbers.Min() - 0.5;
             double maxX = stats.QuestionNumbers.Max() + 0.5;

@@ -121,11 +121,12 @@
                                                     <Image Height="350" Width="350">
                                                         <Image.Source>
                                                             <PriorityBinding>
-                                                                <Binding Path="PreviewImagePath"/>
-                                                                <Binding Path="PicturePath"/>
+                                                                <Binding Path="PreviewImagePath" />
+                                                                <Binding Path="PicturePath" />
                                                             </PriorityBinding>
                                                         </Image.Source>
                                                     </Image>
+
                                                 </Button>
                                             </Border>
 

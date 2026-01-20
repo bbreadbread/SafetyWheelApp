@@ -24,8 +24,8 @@ namespace Safety_Wheel.Pages.Student
     /// </summary>
     public partial class MainPage : Page
     {
-        private readonly StudentService _studentService = new();
-        private readonly TeacherService _teacherService = new();
+        private StudentService _studentService = new();
+        private TeacherService _teacherService = new();
 
         public MainPage()
         {
@@ -66,6 +66,7 @@ namespace Safety_Wheel.Pages.Student
 
                 if (Application.Current.MainWindow is MainWindow mainWindow)
                 {
+                    mainWindow.VM.InitAfterLogin();
                     mainWindow.UpdateUserName(CurrentUser.Name);
                 }
                 

@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Safety_Wheel.Models;
-using Safety_Wheel.Services;
-using System;
 
 
 namespace UnitTestsForSafetyWheel

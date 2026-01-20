@@ -54,10 +54,13 @@ namespace Safety_Wheel.Services
 
         public void Remove(Question question)
         {
-            _db.Remove(question);
-            if (Commit() > 0)
-                if (Questions.Contains(question))
-                    Questions.Remove(question);
+            if (question == null)
+                return;
+
+            DeleteQuestion(question.Id);
+
+            Questions.Clear();
+            GetAll();
         }
 
         public void Update(Question question)
@@ -92,24 +95,27 @@ namespace Safety_Wheel.Services
         }
 
 
-        public void DeleteByTest(int testId)
+        public void DeleteQuestion(int questionId)
         {
+            var question = _db.Questions
+                .FirstOrDefault(q => q.Id == questionId);
 
-            var questions = _db.Questions
-                .Where(q => q.TestId == testId)
-                .ToList();
-
-            if (!questions.Any())
+            if (question == null)
                 return;
 
-            var questionIds = questions.Select(q => q.Id).ToList();
+            var studentAnswers = _db.StudentAnswers
+                .Where(sa => sa.QuestionId == questionId)
+                .ToList();
+
+            _db.StudentAnswers.RemoveRange(studentAnswers);
 
             var options = _db.Options
-                .Where(o => questionIds.Contains(o.QuestionId))
+                .Where(o => o.QuestionId == questionId)
                 .ToList();
 
             _db.Options.RemoveRange(options);
-            _db.Questions.RemoveRange(questions);
+
+            _db.Questions.Remove(question);
 
             _db.SaveChanges();
         }

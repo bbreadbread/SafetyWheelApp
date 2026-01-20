@@ -53,17 +53,16 @@ namespace Safety_Wheel.Pages.Teacher
             GlobalInnerFrame = FrameTeacher;
         }
 
-        private void DatesMenuControl_ItemInvoked(object sender, MahApps.Metro.Controls.HamburgerMenuItemInvokedEventArgs e)
-        {
-            if (DatesMenuControl.IsPaneOpen)
-            {
-                var anim = new DoubleAnimation(48, TimeSpan.FromMilliseconds(250));
-                DatesMenuControl.BeginAnimation(MahApps.Metro.Controls.HamburgerMenu.CompactPaneLengthProperty, anim);
-                DatesMenuControl.IsPaneOpen = false;
-                DatesMenuControl.SetCurrentValue(HamburgerMenu.SelectedIndexProperty, -1);
-            }
-            
-        }
+        //private void DatesMenuControl_ItemInvoked(object sender, MahApps.Metro.Controls.HamburgerMenuItemInvokedEventArgs e)
+        //{
+        //    if (DatesMenuControl.IsPaneOpen)
+        //    {
+        //        var anim = new DoubleAnimation(48, TimeSpan.FromMilliseconds(250));
+        //        DatesMenuControl.BeginAnimation(MahApps.Metro.Controls.HamburgerMenu.CompactPaneLengthProperty, anim);
+        //        DatesMenuControl.IsPaneOpen = false;
+        //        DatesMenuControl.SetCurrentValue(HamburgerMenu.SelectedIndexProperty, -1);
+        //    }
+        //}
 
         private void DataGridRow_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -75,22 +74,41 @@ namespace Safety_Wheel.Pages.Teacher
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            DataContext = new MainViewModel(_menuItemsCount);
+            if (Application.Current.MainWindow is MainWindow mw)
+            {
+                DataContext = mw.VM;
+            }
         }
+
 
         private void HamburgerMenu_ItemInvoked(object sender, HamburgerMenuItemInvokedEventArgs e)
         {
+            if (DatesMenuControl.IsPaneOpen)
+            {
+                var anim = new DoubleAnimation(48, TimeSpan.FromMilliseconds(250));
+                DatesMenuControl.BeginAnimation(MahApps.Metro.Controls.HamburgerMenu.CompactPaneLengthProperty, anim);
+                DatesMenuControl.IsPaneOpen = false;
+                DatesMenuControl.SetCurrentValue(HamburgerMenu.SelectedIndexProperty, -1);
+            }
+
             if (!e.IsItemOptions)
                 return;
 
-            if (e.InvokedItem is MenuItemViewModel item &&
-                item.Tag is MainMenuType.TeacherManager)
+            if (e.InvokedItem is MenuItemViewModel item)
             {
                 var menu = sender as MahApps.Metro.Controls.HamburgerMenu;
-
                 if (Application.Current.MainWindow is MainWindow mw)
                 {
-                    mw.TeacherManagerFlyout.IsOpen = true;
+                    switch (item.Tag)
+                    {
+                        case MainMenuType.TeacherManager:
+                            mw.TeacherManagerFlyout.IsOpen = true;
+                            break;
+
+                        case MainMenuType.MonthFilter:
+                            mw.FilterMonthFlyout.IsOpen = true;
+                            break;
+                    }
                 }
             }
         }

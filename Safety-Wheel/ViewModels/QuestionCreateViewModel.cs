@@ -1,16 +1,13 @@
 ﻿using Safety_Wheel.Models;
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.IO;
 
 namespace Safety_Wheel.ViewModels
 {
     public class QuestionCreateViewModel : ObservableObject
     {
-        public Question NewQuestion { get; set; } = new();
+        public Question NewQuestion { get; set; }
 
         public ObservableCollection<OptionCreateViewModel> Options { get; }
             = new();
@@ -28,8 +25,24 @@ namespace Safety_Wheel.ViewModels
         public string? PreviewImagePath
         {
             get => _previewImagePath;
-            set => SetProperty(ref _previewImagePath, value);
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    _previewImagePath = null;
+                    OnPropertyChanged();
+                    return;
+                }
+
+                var fullPath = Path.IsPathRooted(value)
+                    ? value
+                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, value);
+
+                _previewImagePath = fullPath;
+                OnPropertyChanged();
+            }
         }
+
 
 
         public string Text
@@ -39,11 +52,11 @@ namespace Safety_Wheel.ViewModels
             {
                 NewQuestion.TestQuest = value;
                 OnPropertyChanged();
-
                 RecalculateGhostState();
                 _onActivated?.Invoke();
             }
         }
+
         public string Comments
         {
             get => NewQuestion.Comments ?? "";
@@ -51,7 +64,6 @@ namespace Safety_Wheel.ViewModels
             {
                 NewQuestion.Comments = value;
                 OnPropertyChanged();
-
                 _onActivated?.Invoke();
             }
         }
@@ -62,7 +74,6 @@ namespace Safety_Wheel.ViewModels
             set
             {
                 NewQuestion.QuestionType = value ? 2 : 1;
-
 
                 if (!value && string.IsNullOrEmpty(PreviewImagePath))
                     PreviewImagePath = PicturePath;
@@ -77,19 +88,27 @@ namespace Safety_Wheel.ViewModels
 
         public string PicturePath
         {
-            get => NewQuestion.PicturePath ?? null;
+            get => NewQuestion.PicturePath;
             set
             {
-                NewQuestion.PicturePath = value;
+                var fullPath = Path.IsPathRooted(value)
+                    ? value
+                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, value);
+
+                NewQuestion.PicturePath = fullPath;
                 OnPropertyChanged();
             }
         }
 
-        public QuestionCreateViewModel(bool isGhost, Action onActivated)
+
+
+        public QuestionCreateViewModel(Question question, bool isGhost, Action onActivated)
         {
+            NewQuestion = question;
             IsGhost = isGhost;
             _onActivated = onActivated;
 
+            PreviewImagePath = question.PicturePath;
             SyncGhostOptions();
         }
 
@@ -117,9 +136,7 @@ namespace Safety_Wheel.ViewModels
             }
 
             if (ghostOptions.Count == 0)
-            {
                 Options.Add(CreateGhostOption());
-            }
 
             if (ghostOptions.Count > 1)
             {
@@ -130,10 +147,7 @@ namespace Safety_Wheel.ViewModels
 
         private OptionCreateViewModel CreateGhostOption()
         {
-            return new OptionCreateViewModel(
-                isGhost: true,
-                isImageOption: IsMultiImage,
-                parent: this);
+            return new OptionCreateViewModel(true, IsMultiImage, this);
         }
 
         public void RecalculateQuestionType()
@@ -146,15 +160,20 @@ namespace Safety_Wheel.ViewModels
 
             int correctCount = Options
                 .Where(o => !o.IsGhost)
-                .Count(o => o.IsCorrect == true);
+                .Count(o => (bool)o.IsCorrect);
 
             NewQuestion.QuestionType = correctCount <= 1 ? 1 : 3;
         }
 
         public void SetQuestionImage(string path)
         {
-            PicturePath = path;
-            PreviewImagePath = path;
+            var fullPath = Path.IsPathRooted(path)
+                ? path
+                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
+
+            PicturePath = fullPath;
+            PreviewImagePath = fullPath;
         }
+
     }
 }

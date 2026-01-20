@@ -1,6 +1,7 @@
 ﻿using Safety_Wheel.Models;
 using System.Diagnostics;
 using System.Windows.Input;
+using System.IO;
 
 namespace Safety_Wheel.ViewModels
 {
@@ -65,8 +66,13 @@ namespace Safety_Wheel.ViewModels
 
         public void SetOptionImage(string path)
         {
-            Value = path;
+            var fullPath = Path.IsPathRooted(path)
+                ? path
+                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
+
+            Value = fullPath;
         }
+
 
         public ICommand ShowPreviewCommand { get; }
 

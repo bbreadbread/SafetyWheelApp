@@ -47,6 +47,11 @@ namespace Safety_Wheel.Pages.Student.TestTypes
                 {
                     PathImage = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _question.PicturePath);
                 }
+
+                if (!string.IsNullOrEmpty(_question.PicturePath))
+                {
+                    PathImage = System.IO.Path.Combine( AppDomain.CurrentDomain.BaseDirectory,_question.PicturePath.TrimStart('/', '\\')); // убираем лишний слэш
+                }
             }
             if (isThreeType == null)
                 LoadOptions();
@@ -75,34 +80,31 @@ namespace Safety_Wheel.Pages.Student.TestTypes
         }
         private void CheckAlreadyAnswered()
         {
-            //    if (_attempt.TestType != 3)
-            //    {
             _studentAnswerService.GetAll(_attempt.Id, _question.Id);
 
-                bool answered = _studentAnswerService.StudentAnswers
-                                       .Any(sa => sa.AttemptId == _attempt.Id &&
-                                                  sa.QuestionId == _question.Id);
+            bool answered = _studentAnswerService.StudentAnswers
+                                   .Any(sa => sa.AttemptId == _attempt.Id &&
+                                              sa.QuestionId == _question.Id);
 
-                if (!answered)
-                    return;
+            if (!answered)
+                return;
 
-                QuestionAnswered?.Invoke(true);
+            QuestionAnswered?.Invoke(true);
 
-                foreach (var st in GeneratedAnswersPanel.Children.OfType<StackPanel>())
+            foreach (var st in GeneratedAnswersPanel.Children.OfType<StackPanel>())
+            {
+                foreach (var btn in st.Children.OfType<Button>())
                 {
-                    foreach (var btn in st.Children.OfType<Button>())
+                    if (btn.Tag is string t && int.TryParse(t, out int num))
                     {
-                        if (btn.Tag is string t && int.TryParse(t, out int num))
+                        if (_studentAnswerService.StudentAnswers.Any(sa => sa.Option.Number == num))
                         {
-                            if (_studentAnswerService.StudentAnswers.Any(sa => sa.Option.Number == num))
-                            {
-                                btn.Tag = "Selected";
-                            }
-                            btn.IsEnabled = false;
+                            btn.Tag = "Selected";
                         }
+                        btn.IsEnabled = false;
                     }
                 }
-            //}
+            }
         }
 
         private void ShowAnswers()

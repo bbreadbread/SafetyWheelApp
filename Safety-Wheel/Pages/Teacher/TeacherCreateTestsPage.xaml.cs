@@ -61,7 +61,7 @@ namespace Safety_Wheel.Pages.Teacher
             }
             else
             {
-                DataContext = new TeacherCreateTestViewModel(null);
+                DataContext = new TeacherCreateTestViewModel();
             }
         }
     }

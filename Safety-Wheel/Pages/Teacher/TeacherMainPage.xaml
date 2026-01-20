@@ -50,13 +50,12 @@
                                DisplayMode="CompactInline" 
                                IsPaneOpen="False" 
                                
-                               
                                ItemsSource="{Binding MainMenuItems}"
+                               ItemTemplate="{StaticResource MenuItemTemplate}"                                
                                OptionsItemsSource="{Binding MenuOptionItems}"
                                OptionsItemTemplate="{StaticResource MenuItemTemplate}"
-                               ItemTemplate="{StaticResource MenuItemTemplate}" 
-                               ItemInvoked="HamburgerMenu_ItemInvoked"
                                
+                               ItemInvoked="HamburgerMenu_ItemInvoked"
                                SelectedItem="{Binding SelectedMainMenuItem, Mode=TwoWay}" 
                                SelectedIndex="0"
                                HamburgerVisibility="Collapsed" 
@@ -67,19 +66,26 @@
                                x:Name="PeopleMenuControl"
                                DisplayMode="CompactInline" 
                                IsPaneOpen="False" 
-                               ItemTemplate="{StaticResource MenuItemTemplate}" 
+                               
                                ItemsSource="{Binding MenuItems}"
+                               ItemTemplate="{StaticResource MenuItemTemplate}" 
+                               
                                SelectedItem="{Binding SelectedStudent, Mode=TwoWay}"
                                SelectedIndex="0"
                                HamburgerVisibility="Collapsed" 
                                Style="{StaticResource PeoplesMenu}"/>
-
+<!--ItemInvoked="DatesMenuControl_ItemInvoked"-->
             <mah:HamburgerMenu x:Name="DatesMenuControl" Grid.Column="2"
-                               ItemInvoked="DatesMenuControl_ItemInvoked"
+                               
                                DisplayMode="CompactInline" 
                                IsPaneOpen="False" 
+                               
                                ItemTemplate="{StaticResource MenuItemTemplate}" 
-                               ItemsSource="{Binding MenuDatesItems}" 
+                               ItemsSource="{Binding MenuDatesItems}"                                
+                               OptionsItemsSource="{Binding MenuOptionDateItems}"
+                               OptionsItemTemplate="{StaticResource MenuItemTemplate}"
+                               ItemInvoked="HamburgerMenu_ItemInvoked"
+                               
                                SelectedItem="{Binding SelectedDate, Mode=TwoWay}" SelectedIndex="0" 
                                HamburgerVisibility="Collapsed" 
                                Style="{StaticResource DatesMenu}" DockPanel.Dock="Left">

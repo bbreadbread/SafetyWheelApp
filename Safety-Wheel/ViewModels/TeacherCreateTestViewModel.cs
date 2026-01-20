@@ -9,7 +9,7 @@ namespace Safety_Wheel.ViewModels
     public class TeacherCreateTestViewModel : ObservableObject
     {
         public bool IsEditMode { get; }
-        public Test Test { get; set; } = new();
+        public Test Test { get; set; }
 
         public ObservableCollection<QuestionCreateViewModel> Questions { get; }
             = new();
@@ -35,26 +35,22 @@ namespace Safety_Wheel.ViewModels
         private readonly QuestionService _questionService = new();
         private readonly OptionService _optionService = new();
 
-        public TeacherCreateTestViewModel() { }
-
-        public TeacherCreateTestViewModel(Test? test = null)
+        public TeacherCreateTestViewModel()
         {
-            if (test == null)
-            {
-                IsEditMode = false;
-                Test = new Test();
-                AddGhostQuestion();
-            }
-            else
-            {
-                IsEditMode = true;
-                LoadTestForEdit(test);
-            }
+            IsEditMode = false;
+            Test = new Test();
+            AddGhostQuestion();
+        } 
+
+        public TeacherCreateTestViewModel(Test test)
+        {
+            IsEditMode = true;
+            LoadTestForEdit(test);
         }
 
         private void AddGhostQuestion()
         {
-            Questions.Add(new QuestionCreateViewModel(true, OnQuestionActivated));
+            Questions.Add(new QuestionCreateViewModel(new Question(), true, OnQuestionActivated));
         }
 
         private void OnQuestionActivated()
@@ -68,6 +64,7 @@ namespace Safety_Wheel.ViewModels
         public void Save()
         {
             int qi = 1;
+
             if (SelectedSubject == null)
             {
                 MessageBox.Show("Выберите дисциплину");
@@ -76,7 +73,6 @@ namespace Safety_Wheel.ViewModels
 
             if (IsEditMode)
             {
-                _testService.Update(Test);
 
                 var dbQuestions = _questionService
                     .GetQuestiosForCurrentTest(Test.Id)
@@ -86,6 +82,10 @@ namespace Safety_Wheel.ViewModels
                     .Where(q => !q.IsGhost)
                     .ToList();
 
+                Test.MaxScore = vmQuestions.Count();
+                Test.PenaltyMax = vmQuestions.Count();
+                _testService.Update(Test);
+
                 int qj = 1;
 
                 foreach (var qvm in vmQuestions)
@@ -94,7 +94,7 @@ namespace Safety_Wheel.ViewModels
                     qvm.NewQuestion.Number = qj++;
 
                     if (qvm.NewQuestion.QuestionType == 2)
-                        qvm.NewQuestion.PicturePath = "//";
+                        qvm.NewQuestion.PicturePath = null;
 
                     Question savedQuestion;
 
@@ -133,40 +133,29 @@ namespace Safety_Wheel.ViewModels
                         ovm.NewOption.Number = oi++;
 
                         if (ovm.NewOption.Id == 0)
-                        {
                             _optionService.Add(ovm.NewOption, (int)ovm.NewOption.Number);
-                        }
                         else
-                        {
                             _optionService.Update(ovm.NewOption);
-                        }
                     }
 
                     foreach (var dbOpt in dbOptions)
                     {
                         if (!vmOptions.Any(o => o.NewOption.Id == dbOpt.Id))
-                        {
                             _optionService.Remove(dbOpt);
-                        }
                     }
                 }
 
                 foreach (var dbQ in dbQuestions)
                 {
                     if (!vmQuestions.Any(q => q.NewQuestion.Id == dbQ.Id))
-                    {
                         _questionService.Remove(dbQ);
-                    }
                 }
 
                 MessageBox.Show("Тест обновлён");
                 return;
             }
 
-
             _testService.Add(Test, Questions.Count(q => !q.IsGhost));
-
-
 
             foreach (var q in Questions.Where(q => !q.IsGhost))
             {
@@ -210,15 +199,7 @@ namespace Safety_Wheel.ViewModels
 
             foreach (var q in questions)
             {
-                var qvm = new QuestionCreateViewModel(false, OnQuestionActivated)
-                {
-                    NewQuestion = q
-                };
-
-                if (!string.IsNullOrEmpty(q.PicturePath))
-                    qvm.PreviewImagePath = q.PicturePath;
-
-
+                var qvm = new QuestionCreateViewModel(q, false, OnQuestionActivated);
 
                 qvm.Options.Clear();
 

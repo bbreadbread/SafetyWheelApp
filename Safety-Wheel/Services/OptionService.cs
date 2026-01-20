@@ -68,11 +68,22 @@ namespace Safety_Wheel.Services
 
         public void Remove(Option option)
         {
-            _db.Remove(option);
+            if (option == null)
+                return;
+
+            var answers = _db.StudentAnswers
+                .Where(sa => sa.OptionId == option.Id)
+                .ToList();
+
+            _db.StudentAnswers.RemoveRange(answers);
+
+            _db.Options.Remove(option);
+
             if (Commit() > 0)
                 if (Options.Contains(option))
                     Options.Remove(option);
         }
+
 
         public void Update(Option option)
         {

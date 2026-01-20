@@ -66,8 +66,8 @@ namespace Safety_Wheel.Pages.Student
 
             if (iamisteacher == false)
             {
-                StatusTest = "Прохождение теста: ";
                 InitializeTimer();
+                StatusTest = "Прохождение теста: ";
                 _attempt = new Attempt
                 {
                     StudentsId = CurrentUser.Id,
@@ -83,6 +83,7 @@ namespace Safety_Wheel.Pages.Student
             {
                 StatusTest = "Результаты теста: ";
                 _attempt = atReady;
+                TimeLimit = (_attempt.FinishedAt - _attempt.StartedAt)?.ToString(@"mm\:ss") ?? "--:--";
             }
 
             TypeTest = testTypeService.GetTypeById(_attempt.TestType).Name;
@@ -93,7 +94,6 @@ namespace Safety_Wheel.Pages.Student
 
             DataContext = this;
 
-            //questionService = new QuestionService(_test.Id);
             _questions = studentAnswerService.GetQoestiosForCurrentTest(_test.Id);
 
             InitializeComponent();
