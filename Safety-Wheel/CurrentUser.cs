@@ -11,6 +11,7 @@ namespace Safety_Wheel
         public static int Id { get; set; }
         public static string Name { get; set; }
         public static string UserType { get; set; }
+        public static string Login { get; set; }
 
         public static void Clear()
         {

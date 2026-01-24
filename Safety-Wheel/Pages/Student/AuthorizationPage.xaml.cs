@@ -33,7 +33,8 @@ namespace Safety_Wheel.Pages.Student
         }
 
         private void ButtonAuth_Click(object sender, RoutedEventArgs e)
-        {
+        { 
+            _teacherService.GetAll();
             string login = TbLogin.Text.Trim();
             string password = TbPassword.Text.Trim();
 
@@ -55,7 +56,7 @@ namespace Safety_Wheel.Pages.Student
                 return;
             }
 
-            _teacherService.GetAll();
+           
             var teacher = _teacherService.Teachers.FirstOrDefault(t =>
                             t.Login == login && t.Password == password);
             if (teacher != null)
@@ -63,6 +64,7 @@ namespace Safety_Wheel.Pages.Student
                 CurrentUser.Id = teacher.Id;
                 CurrentUser.Name = teacher.Name ?? string.Empty;
                 CurrentUser.UserType = "Teacher";
+                CurrentUser.Login = _teacherService.GetTeacherById(teacher.Id).Login;
 
                 if (Application.Current.MainWindow is MainWindow mainWindow)
                 {

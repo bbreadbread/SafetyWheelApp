@@ -5,13 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Safety_Wheel"
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:valid="clr-namespace:Safety_Wheel.ValidationRules"
         mc:Ignorable="d"
         Title="Безопасное колесо" 
         WindowState="Maximized"
         WindowTitleBrush="{StaticResource DarkBlue}"
         GlowBrush="DarkBlue"
-        BorderBrush="{StaticResource DarkBlue}">
-
+        BorderBrush="{StaticResource DarkBlue}"
+         Closing="MainWindow_Closing">
+    <Window.Resources>
+        <ControlTemplate x:Key="validationTemplate">
+            <StackPanel>
+                <Border BorderBrush="Red" BorderThickness="1">
+                    <AdornedElementPlaceholder x:Name="adorner"/>
+                </Border>
+                <TextBlock Text="{Binding [0].ErrorContent}"
+                       Foreground="Red" FontSize="11"
+                       Margin="5,2,0,0"/>
+            </StackPanel>
+        </ControlTemplate>
+    </Window.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="80"/>
@@ -34,15 +48,16 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                
-                <TextBlock x:Name="HeaderUserNameTextBlock" 
-                          Grid.Column="0"
-                          Foreground="#FF052D6E"
-                          FontSize="48"
-                          FontWeight="Bold"
-                          VerticalAlignment="Center"
-                           HorizontalAlignment="Left"
-                          Margin="80,0,0,0"/>
+
+                <TextBlock  Grid.Column="0"
+                            Foreground="#FF052D6E"
+                            FontSize="48"
+                            FontWeight="Bold"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Left"
+                            Margin="80,0,0,0"
+                            Text="{Binding UserFullName}"/>
+
 
                 <StackPanel Grid.Column="1" 
                             Height="80"
@@ -66,7 +81,7 @@
                           Cursor="Hand"
                            Margin="15,0,30,0"
                           MouseDown="ExitImage_MouseDown"/>
-                          
+
                 </StackPanel>
             </Grid>
         </Border>
@@ -75,7 +90,7 @@
                Grid.Row="1"
                NavigationUIVisibility="Hidden"
                HorizontalAlignment="Stretch"
-           VerticalAlignment="Stretch"
+               VerticalAlignment="Stretch"
                Source="Pages/Student/AuthorizationPage.xaml"/>
     </Grid>
 
@@ -83,96 +98,204 @@
         <Controls:FlyoutsControl>
 
             <Controls:Flyout x:Name="TeacherManagerFlyout"
-                        Header="Управление учениками"
-                        Position="Right"
-                        Width="450"
-                        IsOpen="False"
-                        IsPinned="True"
-                             Background="{StaticResource MainBlue}"
-                             IsOpenChanged="TeacherManagerFlyout_IsOpenChanged">
+                 Header="Управление учениками"
+                 Position="Right"
+                 Width="450"
+                 IsOpen="False"
+                 IsPinned="True"
+                      Background="{StaticResource MainBlue}"
+                      IsOpenChanged="TeacherManagerFlyout_IsOpenChanged">
 
                 <Grid Margin="15">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Button Style="{StaticResource MiniMiniHomeButton}" Content="Добавить" Click="AddStudent_Click"/>
-                        <Button Style="{StaticResource MiniMiniHomeButton}" Content="Сохранить" Click="SaveStudent_Click" Margin="10,0"/>
-                        <Button Style="{StaticResource MiniMiniHomeButton}" Content="Удалить" Click="DeleteStudent_Click"/>
+                    <StackPanel Orientation="Horizontal"
+         Margin="0,0,0,10"
+         HorizontalAlignment="Center"
+                         Grid.Row="1">
+                        <Button Style="{StaticResource MiniMiniHomeButton}"
+         Content="Добавить"
+         Click="AddStudent_Click"/>
+                        <Button Style="{StaticResource MiniMiniHomeButton}"
+         Content="Сохранить"
+         Click="SaveStudent_Click"
+         Margin="10,0"/>
+                        <Button Style="{StaticResource MiniMiniHomeButton}"
+         Content="Удалить"
+         Click="DeleteStudent_Click"/>
+
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Margin="0,0,0,10"  x:Name="StudentInputsPanel">
+                        <Label>Имя</Label>
+                        <TextBox x:Name="NameTextBox"
+  Background="White"
+  Foreground="Black"
+  Validation.ErrorTemplate="{StaticResource validationTemplate}">
+                            <TextBox.Text>
+                                <Binding Path="StudentName"
+          UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <valid:NameValidationRule/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+
+                        <Label>Логин</Label>
+                        <TextBox x:Name="LoginTextBox"
+  Background="White"
+  Foreground="Black"
+  Validation.ErrorTemplate="{StaticResource validationTemplate}">
+                            <TextBox.Text>
+                                <Binding Path="StudentLogin"
+          UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <valid:LoginUniqueValidationRule x:Name="StudentLoginRule"/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+
+                        <Label>Пароль</Label>
+                        <TextBox x:Name="PasswordTextBox"
+  Background="White"
+  Foreground="Black"
+  Validation.ErrorTemplate="{StaticResource validationTemplate}">
+                            <TextBox.Text>
+                                <Binding Path="StudentPassword"
+          UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <valid:RequiredFieldValidationRule/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
                     </StackPanel>
 
-                    <StackPanel Grid.Row="1" Margin="0,0,0,10">
-                        <TextBlock Text="Имя"/>
-                        <TextBox x:Name="NameTextBox"/>
-
-                        <TextBlock Text="Логин" Margin="0,5,0,0"/>
-                        <TextBox x:Name="LoginTextBox"/>
-
-                        <TextBlock Text="Логин" Margin="0,5,0,0"/>
-                        <TextBox x:Name="PasswordTextBox"/>
-                    </StackPanel>
 
                     <DataGrid x:Name="StudentsGrid"
-                              Grid.Row="2"
-                              IsReadOnly="True"
-                              SelectionMode="Single"
-                              SelectionUnit="FullRow"
-                              AutoGenerateColumns="False"
-                              SelectionChanged="StudentsGrid_SelectionChanged">
-
+                               Grid.Row="3"
+                               IsReadOnly="True"
+                               SelectionMode="Single"
+                               SelectionUnit="FullRow"
+                               AutoGenerateColumns="False"
+                               SelectionChanged="StudentsGrid_SelectionChanged">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Имя Фамилия" Binding="{Binding Name}" />
                             <DataGridTextColumn Header="Логин" Binding="{Binding Login}" />
                             <DataGridTextColumn Header="Пароль" Binding="{Binding Password}" />
                         </DataGrid.Columns>
                     </DataGrid>
-                </Grid>
+                    <Border Grid.Row="0"
+                             Margin="0,10"
+                             Padding="10"
+                             Background="#33000000"
+                             CornerRadius="8">
 
+                        <StackPanel x:Name="TeacherInputsPanel">
+                            <TextBlock Text="Профиль преподавателя"
+                                FontWeight="Bold"
+                                FontSize="16"
+                                Margin="0,0,0,8"/>
+
+                            <TextBlock Text="Имя"/>
+                            <TextBox x:Name="TeacherNameTextBox"
+                                      Background="White"
+                                      Foreground="Black"
+                                      Validation.ErrorTemplate="{StaticResource validationTemplate}">
+                                <TextBox.Text>
+                                    <Binding Path="TeacherName"
+          UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <valid:NameValidationRule/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+
+                            <TextBlock Text="Логин" Margin="0,5,0,0"/>
+                            <TextBox x:Name="TeacherLoginTextBox"
+                                      Background="White"
+                                      Foreground="Black"
+                                      Validation.ErrorTemplate="{StaticResource validationTemplate}">
+                                <TextBox.Text>
+                                    <Binding Path="TeacherLogin"
+          UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <valid:TeacherLoginValidationRule x:Name="TeacherLoginRule"/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+
+                            <TextBlock Text="Пароль" Margin="0,5,0,0"/>
+                            <TextBox x:Name="TeacherPasswordTextBox"
+                                      Background="White"
+                                      Foreground="Black"
+                                      Validation.ErrorTemplate="{StaticResource validationTemplate}">
+                                <TextBox.Text>
+                                    <Binding Path="TeacherPassword"
+          UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <valid:TeacherRequiredValidationRule/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <Button Content="Изменить данные"
+                             Style="{StaticResource MiniMiniHomeButton}"
+                             Margin="0,10,0,0"
+                             HorizontalAlignment="Right"
+                             Click="UpdateTeacher_Click"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
             </Controls:Flyout>
 
             <Controls:Flyout x:Name="FilterMonthFlyout"
-                 Header="Фильтр по месяцу"
-                 Position="Right"
-                 Width="300"
-                 IsPinned="True"
-                 Background="{StaticResource MainBlue}">
+                     Header="Фильтр по месяцу"
+                     Position="Right"
+                     Width="300"
+                     IsPinned="True"
+                     Background="{StaticResource MainBlue}">
 
                 <StackPanel Margin="20">
 
                     <TextBlock Text="Год"
-                   Margin="0,0,0,5"/>
+                       Margin="0,0,0,5"/>
 
                     <TextBox x:Name="YearTextBox"
-                 Height="40"
-                 PreviewTextInput="YearTextBox_PreviewTextInput"/>
+                     Height="40"
+                     PreviewTextInput="YearTextBox_PreviewTextInput"/>
 
                     <TextBlock Text="Месяц"
-                   Margin="0,15,0,5"/>
+                       Margin="0,15,0,5"/>
 
                     <ComboBox x:Name="MonthComboBox"
-          Height="30"
-          DisplayMemberPath="Name"
-          SelectedValuePath="Number"
-          SelectionChanged="MonthComboBox_SelectionChanged"/>
-
+                              Background="White"
+                              Foreground="Black"
+                              Height="30"
+                              DisplayMemberPath="Name"
+                              SelectedValuePath="Number"
+                              SelectionChanged="MonthComboBox_SelectionChanged"/>
 
                     <Button Content="Применить"
-        Margin="0,20,0,0"
-        Height="35"
-        Command="{Binding ApplyMonthFilterCommand}" />
+                            Margin="0,20,0,0"
+                            Height="35"
+                            Command="{Binding ApplyMonthFilterCommand}" />
 
                     <Button Content="Сбросить"
-        Margin="0,10,0,0"
-        Height="30"
-        Command="{Binding ResetMonthFilterCommand}" />
+                            Margin="0,10,0,0"
+                            Height="30"
+                            Command="{Binding ResetMonthFilterCommand}" />
 
                 </StackPanel>
             </Controls:Flyout>
-
-
         </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>
 </Controls:MetroWindow>

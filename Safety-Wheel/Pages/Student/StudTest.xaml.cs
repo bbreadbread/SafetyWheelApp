@@ -59,13 +59,13 @@ namespace Safety_Wheel.Pages.Student
         public StudTest(Test currentTest, int? seconds = null, int? typeTest = null, bool? iamisteacher = false, Attempt atReady = null)
         {
             _test = currentTest;
-            _canClosed = false;
-            _isTestActivated = true;
             _timeLimitSeconds = seconds;
-
 
             if (iamisteacher == false)
             {
+                _canClosed = false;
+                _isTestActivated = true;
+
                 InitializeTimer();
                 StatusTest = "Прохождение теста: ";
                 _attempt = new Attempt
@@ -114,7 +114,6 @@ namespace Safety_Wheel.Pages.Student
             LoadCurrentQuestion();
 
             StudTestTypeOne.QuestionAnswered += closed => _currentQuestionClosed = closed;
-
         }
         private void InitializeTimer()
         {
@@ -131,11 +130,12 @@ namespace Safety_Wheel.Pages.Student
             if (_isTestActivated == false)
             {
                 _timer.Stop();
+                
+                _attempt.Score = HowManyCorrect();
+                _attempt.Status = "Завершен (Принудительный выход)";
                 CompleteTest();
 
-                _attempt.Score = HowManyCorrect();
                 _attemptService.Update(_attempt);
-                _attempt.Status = "Завершен (Принудительный выход)";
             }
             UpdateTimeDisplay();
 

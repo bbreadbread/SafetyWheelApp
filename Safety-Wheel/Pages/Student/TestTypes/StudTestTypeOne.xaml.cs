@@ -1,6 +1,7 @@
 ﻿using Safety_Wheel.Models;
 using Safety_Wheel.Services;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -50,7 +51,7 @@ namespace Safety_Wheel.Pages.Student.TestTypes
 
                 if (!string.IsNullOrEmpty(_question.PicturePath))
                 {
-                    PathImage = System.IO.Path.Combine( AppDomain.CurrentDomain.BaseDirectory,_question.PicturePath.TrimStart('/', '\\')); // убираем лишний слэш
+                    PathImage = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _question.PicturePath.TrimStart('/', '\\')); // убираем лишний слэш
                 }
             }
             if (isThreeType == null)
@@ -74,7 +75,7 @@ namespace Safety_Wheel.Pages.Student.TestTypes
             for (int i = 1; i <= _serviceOpt.Options.Count; i++)
             {
                 if (isThreeType == null)
-                CreateAndAddOption( i.ToString(), _serviceOpt.Options[i-1]);
+                    CreateAndAddOption(i.ToString(), _serviceOpt.Options[i - 1]);
                 else CreateAndAddOptionTypeThree(i.ToString(), _serviceOpt.Options[i - 1]);
             }
         }
@@ -99,14 +100,13 @@ namespace Safety_Wheel.Pages.Student.TestTypes
                     {
                         if (_studentAnswerService.StudentAnswers.Any(sa => sa.Option.Number == num))
                         {
-                            btn.Tag = "Selected";
+                            btn.Style = (Style)FindResource("DownOptionButton");
                         }
                         btn.IsEnabled = false;
                     }
                 }
             }
         }
-
         private void ShowAnswers()
         {
             var correctOptionNumbers = _question.Options
@@ -184,9 +184,7 @@ namespace Safety_Wheel.Pages.Student.TestTypes
                     if (s is Button clickedButton)
                     {
                         ResetAllButtonsStyle();
-
                         clickedButton.Style = (Style)FindResource("DownOptionButton");
-
                         if (clickedButton.Tag is string tagValue && int.TryParse(tagValue, out int optionId))
                         {
                             var selectedOption = _question.Options.FirstOrDefault(o => o.Number == optionId);
@@ -246,9 +244,6 @@ namespace Safety_Wheel.Pages.Student.TestTypes
                     {
                         if (clickedButton.Style == (Style)FindResource("DownOptionButton")) clickedButton.Style = (Style)FindResource("OptionButton");
                         else clickedButton.Style = (Style)FindResource("DownOptionButton");
-
-
-
 
                         if (clickedButton.Tag is string tagValue && int.TryParse(tagValue, out int optionId))
                         {

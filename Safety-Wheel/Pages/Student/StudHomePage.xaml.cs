@@ -29,7 +29,7 @@ namespace Safety_Wheel.Pages.Student
         {
             InitializeComponent();
             if (Application.Current.MainWindow is MainWindow mw)
-                mw.HeaderUserNameTextBlock.Text = StudentService.GetCurrentStudent(StudentID).Name ?? string.Empty;
+                mw.VM.UserFullName = StudentService.GetCurrentStudent(StudentID).Name ?? string.Empty;
         }
 
         private void ButtonGoPdd_Click(object sender, RoutedEventArgs e)

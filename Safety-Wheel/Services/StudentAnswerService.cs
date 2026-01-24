@@ -106,7 +106,6 @@ namespace Safety_Wheel.Services
                     return false;
                 }
             }
-
             return true;
         }
 

@@ -12,6 +12,7 @@
         <conv:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
         <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibility"/>
         <conv:IndexPlusOneConverter x:Key="IndexPlusOneConverter"/>
+        <conv:NullImageConverter x:Key="NullImageConverter"/>
     </UserControl.Resources>
 
     <UserControl.DataContext>
@@ -121,11 +122,12 @@
                                                     <Image Height="350" Width="350">
                                                         <Image.Source>
                                                             <PriorityBinding>
-                                                                <Binding Path="PreviewImagePath" />
-                                                                <Binding Path="PicturePath" />
+                                                                <Binding Path="PreviewImagePath" Converter="{StaticResource NullImageConverter}" />
+                                                                <Binding Path="PicturePath" Converter="{StaticResource NullImageConverter}" />
                                                             </PriorityBinding>
                                                         </Image.Source>
                                                     </Image>
+
 
                                                 </Button>
                                             </Border>

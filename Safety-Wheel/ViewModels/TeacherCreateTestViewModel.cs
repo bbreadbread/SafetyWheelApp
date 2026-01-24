@@ -160,9 +160,8 @@ namespace Safety_Wheel.ViewModels
             foreach (var q in Questions.Where(q => !q.IsGhost))
             {
                 q.NewQuestion.TestId = Test.Id;
-
                 if (q.NewQuestion.QuestionType == 2)
-                    q.NewQuestion.PicturePath = "//";
+                    q.NewQuestion.PicturePath = null;
 
                 var savedQuestion = _questionService.Add(
                     q.NewQuestion,

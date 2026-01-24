@@ -12,6 +12,8 @@ using System.Windows.Media;
 using Safety_Wheel.Pages.Student;
 using System.Windows.Input;
 using HarfBuzzSharp;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Safety_Wheel.ViewModels
 {
@@ -26,7 +28,7 @@ namespace Safety_Wheel.ViewModels
         private ObservableCollection<MenuItemViewModel> _menuDatesItems;
         private ObservableCollection<MenuItemViewModel> _menuAttemptsItems;
         private ObservableCollection<MenuItemViewModel> _menuTestsItems;
-        
+
         private StudentService _studentService = new();
         private AttemptService _attemptService = new();
         private SubjectService _subjectService = new();
@@ -81,34 +83,34 @@ namespace Safety_Wheel.ViewModels
             MainMenuItems = new ObservableCollection<MenuItemViewModel>
             {
                  new MenuItemViewModel(this)
-                {
-                    Icon = new PackIconMaterial { Kind = PackIconMaterialKind.ChartLine },
+                 {
+                    Icon = new PackIconMaterial { Kind = PackIconMaterialKind.ChartLine, Width= 30, Height = 30 },
                     Label = "Статистика",
                     ToolTip = "Статистика по тестам и студентам",
                     Tag = MainMenuType.Statistics
                  },
                 new MenuItemViewModel(this)
                 {
-                    Icon = new PackIconMaterial { Kind = PackIconMaterialKind.ChartBar },
+                    Icon = new PackIconMaterial { Kind = PackIconMaterialKind.ChartBar, Width= 30, Height = 30 },
                     Label = "Результаты тестирования",
                     ToolTip = "Просмотр результатов тестирования студентов",
                     Tag = MainMenuType.TestResults
                 },
                 new MenuItemViewModel(this)
                 {
-                    Icon = new PackIconMaterial { Kind = PackIconMaterialKind.PlusBox },
+                    Icon = new PackIconMaterial { Kind = PackIconMaterialKind.PlusBox, Width= 30, Height = 30 },
                     Label = "Создание тестов",
                     ToolTip = "Создание и редактирование тестов",
                     Tag = MainMenuType.EditCreateTests
                 }
-               
+
             };
 
             MenuOptionItems = new ObservableCollection<MenuItemViewModel>
             {
                 new MenuItemViewModel(this)
                 {
-                    Icon = new PackIconMaterial { Kind = PackIconMaterialKind.AccountCog },
+                    Icon = new PackIconMaterial {Kind = PackIconMaterialKind.AccountCog, Width= 30, Height = 30 },
                     Label = "Управление учениками",
                     ToolTip = "Ученики преподавателя",
                     Tag = MainMenuType.TeacherManager
@@ -167,7 +169,9 @@ namespace Safety_Wheel.ViewModels
                 Icon = new PackIconMaterial
                 {
                     Kind = PackIconMaterialKind.PlusCircleOutline,
-                    Foreground = Brushes.White
+                    Foreground = Brushes.White,
+                    Width = 30,
+                    Height = 30
                 },
                 Label = "Дополнительное действие",
                 ToolTip = "Нажмите для выполнения действия",
@@ -185,6 +189,7 @@ namespace Safety_Wheel.ViewModels
 
             MenuDatesItems.Clear();
             MenuAttemptsItems.Clear();
+            MenuOptionDateItems.Clear();
             CurrentContent = null;
 
             var dates = _attemptService
@@ -217,12 +222,26 @@ namespace Safety_Wheel.ViewModels
                 });
             }
 
-            MenuDatesItems.Add(new MenuItemViewModel(this)
+            var q = new MenuItemViewModel(this)
             {
-                Icon = new PackIconMaterial { Kind = PackIconMaterialKind.Filter },
-                Label = "Фильтр по месяцу",
+                Icon = new PackIconMaterial
+                {
+                    Kind = PackIconMaterialKind.PlusCircleOutline,
+                    Foreground = Brushes.White,
+                    Width = 30,
+                    Height = 30
+                },
+                Label = "Дополнительное действие",
+                ToolTip = "Нажмите для выполнения действия",
                 Tag = MainMenuType.MonthFilter
-            });
+            };
+            if (dates.Count() == 0)
+            {
+                MenuDatesItems.Add(q);
+                return;
+            }
+
+            MenuOptionDateItems.Add(q);
         }
 
         private void LoadDateAttempts(DateInfo dateInfo)
@@ -259,13 +278,30 @@ namespace Safety_Wheel.ViewModels
 
             SelectedAttempt = null;
         }
-        
+
         private void LoadTests()
         {
             MenuTestsItems.Clear();
             CurrentContent = null;
 
             _testService.GetAll(null, CurrentUser.Id);
+
+            var attemptItemAll = new MenuItemViewModel(this)
+            {
+                Icon = new TextBlock
+                {
+                    Text = $"Все тесты",
+                    FontSize = 16,
+                    FontWeight = FontWeights.Bold,
+                    Foreground = Brushes.White,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                },
+                Label = $"Нажмите для просмотра всех тестов",
+                ToolTip = $"Нажмите для просмотра всех тестов",
+                Tag = null
+            };
+            MenuTestsItems.Add(attemptItemAll);
 
             foreach (var test in _testService.Tests)
             {
@@ -284,11 +320,27 @@ namespace Safety_Wheel.ViewModels
                     ToolTip = $"тултип",
                     Tag = test
                 };
-
                 MenuTestsItems.Add(attemptItem);
             }
         }
-        
+
+        public void ResetApplicationState()
+        {
+            SelectedStudent = null;
+            SelectedDate = null;
+            SelectedMainMenuItem = null;
+
+            MenuDatesItems.Clear();
+            MenuAttemptsItems.Clear();
+            MenuOptionDateItems.Clear();
+
+            CurrentContent = null;
+
+            AttemptsTableVisible = false;
+            StatisticTableVisible = false;
+            SecondMenuVisible = false;
+        }
+
         public ObservableCollection<MenuItemViewModel> MenuOptionItems
         {
             get => _menuOptionItems;
@@ -365,6 +417,7 @@ namespace Safety_Wheel.ViewModels
                         case MainMenuType.TestResults:
                             AttemptsTableVisible = true;
                             StatisticTableVisible = false;
+                            SecondMenuVisible = true;
                             LoadStudentsForResults();
                             break;
 
@@ -372,6 +425,7 @@ namespace Safety_Wheel.ViewModels
                             LoadTests();
                             AttemptsTableVisible = false;
                             StatisticTableVisible = true;
+                            SecondMenuVisible = true;
                             LoadStudentsForStatistics();
                             TeacherMainPage.GlobalInnerFrame?.Navigate(new TeacherStatisticsPage());
                             break;
@@ -379,6 +433,7 @@ namespace Safety_Wheel.ViewModels
                         case MainMenuType.EditCreateTests:
                             AttemptsTableVisible = false;
                             StatisticTableVisible = false;
+                            SecondMenuVisible = true;
                             LoadSubjectForEdit();
                             TeacherMainPage.GlobalInnerFrame?.Navigate(new TeacherAllTests(null));
                             break;
@@ -509,7 +564,11 @@ namespace Safety_Wheel.ViewModels
                 {
                     CurrentStudent = null;
                     CurrentContent = new StatisticsViewModel(null);
-                    TeacherStatisticsPage.DataPageTeacher?.LoadStatistics(null);
+
+
+                    TeacherStatisticsPage.DataPageTeacher?.LoadStatistics(null, SelectedTest?.Tag as Test);
+                    //SelectedTest = null;
+                    //TeacherStatisticsPage.DataPageTeacher?.LoadStatistics(null);
                     return;
                 }
                 else if (menuType == MainMenuType.EditCreateTests)
@@ -529,7 +588,7 @@ namespace Safety_Wheel.ViewModels
 
                 if (value?.Tag is Student student)
                 {
-                    
+
                     switch (menuType)
                     {
                         case MainMenuType.TestResults:
@@ -621,19 +680,27 @@ namespace Safety_Wheel.ViewModels
             set => SetProperty(ref _selectedDateValue, value);
         }
 
-        //таблица снизу
-        private bool _attemptsTableVisible = true;
-        private bool _statisticTableVisible = true;
+        //видимость
+        private bool _attemptsTableVisible = false;
+        private bool _statisticTableVisible = false;
+
         public bool AttemptsTableVisible
         {
             get => _attemptsTableVisible;
             set => SetProperty(ref _attemptsTableVisible, value);
         }
-
         public bool StatisticTableVisible
         {
             get => _statisticTableVisible;
             set => SetProperty(ref _statisticTableVisible, value);
+        }
+
+        private bool _secondMenuVisible = false;
+
+        public bool SecondMenuVisible
+        {
+            get => _secondMenuVisible;
+            set => SetProperty(ref _secondMenuVisible, value);
         }
 
         //месяцы
@@ -666,8 +733,57 @@ namespace Safety_Wheel.ViewModels
             SelectedMonthDate = null;
             LoadStudentDates(_currentStudent);
         }
+        //глобальное имя
+        public event PropertyChangedEventHandler? PropertyChanged;
 
+        private string _userFullName;
+        public string UserFullName
+        {
+            get => _userFullName;
+            set => SetProperty(ref _userFullName, value);
+        }
 
+        public void Clear()
+        {
+            UserFullName = string.Empty;
+        }
+        //измен        
+        private string _studentName, _studentLogin, _studentPassword;
+        public string StudentName
+        {
+            get => _studentName;
+            set { _studentName = value; OnPropertyChanged(); }
+        }
+        public string StudentLogin
+        {
+            get => _studentLogin;
+            set { _studentLogin = value; OnPropertyChanged(); }
+        }
+        public string StudentPassword
+        {
+            get => _studentPassword;
+            set { _studentPassword = value; OnPropertyChanged(); }
+        }
+
+        private string _teacherName = "";
+        private string _teacherLogin = "";
+        private string _teacherPassword = "";
+
+        public string TeacherName
+        {
+            get => _teacherName;
+            set { _teacherName = value; OnPropertyChanged(); }
+        }
+        public string TeacherLogin
+        {
+            get => _teacherLogin;
+            set { _teacherLogin = value; OnPropertyChanged(); }
+        }
+        public string TeacherPassword
+        {
+            get => _teacherPassword;
+            set { _teacherPassword = value; OnPropertyChanged(); }
+        }
     }
     public class DateInfo
     {
@@ -694,5 +810,7 @@ namespace Safety_Wheel.ViewModels
 
         public event EventHandler CanExecuteChanged;
     }
+
+
 
 }

@@ -18,6 +18,7 @@ using Safety_Wheel.Models;
 using Safety_Wheel.Services;
 using System.Windows.Media.Animation;
 using static Safety_Wheel.ViewModels.MainViewModel;
+using Safety_Wheel.Pages.Student;
 
 namespace Safety_Wheel.Pages.Teacher
 {
@@ -48,6 +49,7 @@ namespace Safety_Wheel.Pages.Teacher
         int _menuItemsCount;
         public TeacherMainPage(int menuItemsCount = 0)
         {
+            StudTest._isTestActivated = false;
             _menuItemsCount = menuItemsCount;
             InitializeComponent();
             GlobalInnerFrame = FrameTeacher;
@@ -112,5 +114,6 @@ namespace Safety_Wheel.Pages.Teacher
                 }
             }
         }
+
     }
 }

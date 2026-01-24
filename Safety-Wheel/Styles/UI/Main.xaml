@@ -3,7 +3,9 @@
                     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"                    
                     xmlns:sys="clr-namespace:System;assembly=mscorlib"
                     xmlns:ScottPlot="clr-namespace:ScottPlot.WPF;assembly=ScottPlot.WPF">
-    
+    <Style TargetType="TextBlock" x:Key="GENERALTXT">
+        <Setter Property="FontFamily" Value="Ubuntu"/>
+    </Style>
     <Style TargetType="Grid" x:Key="MainGrid">
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -13,13 +15,13 @@
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="Width" Value="1500"/>
     </Style>
-    
+
     <!--////Редактирование и создание тестов////-->
     <Style TargetType="UserControl" x:Key="CreateEditTest">
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="Width" Value="920"/>
     </Style>
-    
+
     <Style TargetType="ComboBox" BasedOn="{StaticResource MahApps.Styles.ComboBox}" x:Key="CBStyle">
         <Setter Property="Height" Value="66"/>
         <Setter Property="FontSize" Value="32"/>
@@ -27,7 +29,7 @@
         <Setter Property="mah:TextBoxHelper.Watermark" Value="Выберите дисциплину"/>
         <Setter Property="mah:TextBoxHelper.ClearTextButton" Value="True"/>
     </Style>
-    
+
     <Style TargetType="TextBox" BasedOn="{StaticResource MahApps.Styles.TextBox}" x:Key="TBoxStyle">
         <Setter Property="Height" Value="66"/>
         <Setter Property="FontSize" Value="24"/>
@@ -44,7 +46,7 @@
         <Setter Property="FontSize" Value="24"/>
     </Style>
 
-    
+
     <Style TargetType="Border" x:Key="CardBorderStyle">
         <Setter Property="Background" Value="White"/>
 
@@ -146,11 +148,53 @@
             </Setter.Value>
         </Setter>
     </Style>
-
-
-
     <!--////////-->
-    <Style TargetType="TextBlock" x:Key="MainText">
+
+    <!--////<welcome////-->
+    <Style TargetType="Border" x:Key="Welcome30r">
+        <Setter Property="CornerRadius" Value="40"/>
+        <Setter Property="Background" Value="{StaticResource MainBlue}"/>
+        <Setter Property="Height" Value="80"/>
+    </Style>
+
+    <Style TargetType="Border" x:Key="GeneralWelcome50r">
+        <Setter Property="CornerRadius" Value="40"/>
+        <Setter Property="BorderBrush" Value="{StaticResource MainBlue}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Height" Value="320"/>
+    </Style>
+
+    <Style TargetType="TextBlock" x:Key="MainWelcomeLabel"  BasedOn="{StaticResource GENERALTXT}">
+        <Setter Property="Foreground" Value="{StaticResource Black}"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="FontSize" Value="35"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+        <Setter Property="MaxWidth" Value="1200"/>
+    </Style>
+
+    <Style TargetType="Label" x:Key="WelcomeLabel">
+        <Setter Property="FontFamily" Value="Ubuntu"/>
+        <Setter Property="Foreground" Value="{StaticResource White}"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="FontSize" Value="35"/>
+    </Style>
+
+    <Style TargetType="TextBlock" x:Key="WelcomeTxt" BasedOn="{StaticResource GENERALTXT}">
+        <Setter Property="Foreground" Value="{StaticResource MainBlue}"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="Margin" Value="15"/>
+        <Setter Property="MaxWidth" Value="300"/>
+    </Style>
+    <!--////welcome/>/////-->
+
+    <Style TargetType="TextBlock" x:Key="MainText" BasedOn="{StaticResource GENERALTXT}">
         <Setter Property="FontSize" Value="24"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -159,8 +203,8 @@
         <Setter Property="TextWrapping" Value="Wrap"/>
         <Setter Property="TextAlignment" Value="Left"/>
     </Style>
-    
-    <Style TargetType="TextBlock" x:Key="MainTitle">
+
+    <Style TargetType="TextBlock" x:Key="MainTitle" BasedOn="{StaticResource GENERALTXT}">
         <Setter Property="FontSize" Value="55"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -172,19 +216,21 @@
         <Setter Property="Foreground" Value="{StaticResource DarkBlue}"/>
         <Setter Property="Margin" Value="0"/>
     </Style>
-    
-    <Style TargetType="TextBlock" x:Key="Hint">
+
+    <Style TargetType="TextBlock" x:Key="Hint" BasedOn="{StaticResource GENERALTXT}">
         <Setter Property="FontSize" Value="20"/>
         <Setter Property="Foreground" Value="{StaticResource Black}"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="TextAlignment" Value="Left"/>
     </Style>
-    
-    <Style TargetType="TextBlock" x:Key="Hint2">
+
+    <Style TargetType="TextBlock" x:Key="Hint2" BasedOn="{StaticResource GENERALTXT}">
         <Setter Property="FontSize" Value="15"/>
         <Setter Property="HorizontalAlignment" Value="Right"/>
     </Style>
-    
+
     <Style TargetType="Button" x:Key="HomeButton">
         <Setter Property="Margin" Value="0 15"/>
         <Setter Property="Height" Value="100"/>
@@ -214,7 +260,7 @@
                               HorizontalAlignment="Center"
                               VerticalAlignment="Center">
                             <ContentPresenter.Resources>
-                                <Style TargetType="TextBlock">
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource GENERALTXT}">
                                     <Setter Property="TextWrapping"  Value="Wrap"/>
                                     <Setter Property="TextAlignment" Value="Center"/>
                                 </Style>
@@ -284,7 +330,7 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        
+
 
         <Style.Triggers>
             <Trigger Property="IsPressed" Value="True">
@@ -351,7 +397,7 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    
+
     <Style TargetType="Button" x:Key="ConfirmButton">
         <Setter Property="IsEnabled" Value="True"/>
         <Setter Property="Height" Value="60"/>
@@ -362,7 +408,7 @@
         <Setter Property="FontSize" Value="24"/>
         <Setter Property="FontWeight" Value="Bold"/>
     </Style>
-    
+
     <Style TargetType="Button" x:Key="ConfirmButtonDisenabled">
         <Setter Property="IsEnabled" Value="False"/>
         <Setter Property="Height" Value="60"/>
@@ -373,7 +419,7 @@
         <Setter Property="FontSize" Value="24"/>
         <Setter Property="FontWeight" Value="Bold"/>
     </Style>
-    
+
     <Style TargetType="StackPanel" x:Key="MainStackPanel">
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -384,13 +430,13 @@
     </Style>
 
     <Style TargetType="Border" x:Key="BorderTime">
-        <Setter Property="Margin" Value="25"/>
+        <Setter Property="Margin" Value="5"/>
         <Setter Property="BorderBrush" Value="{StaticResource Gray}"/>
         <Setter Property="BorderThickness" Value="3"/>
         <Setter Property="CornerRadius" Value="5"/>
     </Style>
 
-    
+
     <Style TargetType="Button" x:Key="ButtonTests">
         <Setter Property="Height" Value="170"/>
         <Setter Property="BorderBrush"  Value="{StaticResource DarkBlue}"/>
@@ -438,7 +484,7 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        
+
     </Style>
 
     <Style TargetType="Button" x:Key="OptionButton">
@@ -446,14 +492,14 @@
         <Setter Property="Height"     Value="100"/>
         <Setter Property="FontSize"   Value="24"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
-        
+
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment"   Value="Center"/>
 
         <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
         <Setter Property="TextBlock.TextAlignment"        Value="Center"/>
         <Setter Property="TextBlock.TextWrapping"         Value="Wrap"/>
-        
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -489,16 +535,6 @@
                             <Setter TargetName="border" Property="Background" Value="{StaticResource HoverBlue}"/>
                             <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource HoverBlue}"/>
                         </DataTrigger>
-                        
-                        <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="SelectedTrue">
-                            <Setter TargetName="border" Property="Background" Value="{StaticResource Green}"/>
-                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource BrightGreen}"/>
-                        </DataTrigger>
-
-                        <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="SelectedFalse">
-                            <Setter TargetName="border" Property="Background" Value="{StaticResource Red}"/>
-                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource BrightRed}"/>
-                        </DataTrigger>
 
                         <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="True">
                             <Setter TargetName="border" Property="Background" Value="{StaticResource LightGreen}"/>
@@ -509,6 +545,17 @@
                             <Setter TargetName="border" Property="Background" Value="{StaticResource LightRed}"/>
                             <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource Red}"/>
                         </DataTrigger>
+
+                        <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="SelectedTrue">
+                            <Setter TargetName="border" Property="Background" Value="{StaticResource Green}"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource BrightGreen}"/>
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="SelectedFalse">
+                            <Setter TargetName="border" Property="Background" Value="{StaticResource Red}"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource BrightRed}"/>
+                        </DataTrigger>
+                        
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -541,7 +588,7 @@
                   HorizontalAlignment="Center"
                   VerticalAlignment="Center">
                             <ContentPresenter.Resources>
-                                <Style TargetType="TextBlock">
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource GENERALTXT}">
                                     <Setter Property="TextWrapping"  Value="Wrap"/>
                                     <Setter Property="TextAlignment" Value="Center"/>
                                     <Setter Property="Foreground" Value="Black"/>
@@ -555,16 +602,27 @@
                             <Setter TargetName="border" Property="Background" Value="{StaticResource HoverBlue}"/>
                             <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource HoverBlue}"/>
                         </Trigger>
+
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="border" Property="Background" Value="{StaticResource HoverBlue}"/>
                             <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource HoverBlue}"/>
                         </Trigger>
+
+                        <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="SelectedTrue">
+                            <Setter TargetName="border" Property="Background" Value="{StaticResource Green}"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource BrightGreen}"/>
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="SelectedFalse">
+                            <Setter TargetName="border" Property="Background" Value="{StaticResource Red}"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource BrightRed}"/>
+                        </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style TargetType="StackPanel" x:Key="ButtonOptionsStackPanel">
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="Orientation" Value="Horizontal"/>
@@ -575,12 +633,12 @@
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="Orientation" Value="Horizontal"/>
     </Style>
-    
-    
+
+
     <Style TargetType="Button" x:Key="ButtonOptions">
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
-    
+
     <!--///////////////////////////////-->
     <Style TargetType="Button" x:Key="QuestItemButton">
         <Setter Property="BorderBrush" Value="{StaticResource MainBlue}"/>
@@ -784,9 +842,9 @@
     <Style TargetType="StackPanel" x:Key="LeftGravityStackPanel">
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="Orientation" Value="Horizontal"/>
-        <Setter Property="HorizontalAlignment" Value="Left"/>       
+        <Setter Property="HorizontalAlignment" Value="Left"/>
     </Style>
-    
+
     <Style TargetType="Button" x:Key="PlayButtonOptions">
         <Setter Property="Width" Value="90"/>
         <Setter Property="Height" Value="80"/>
@@ -855,7 +913,7 @@
         <Setter Property="CompactPaneLength"              Value="120"/>
         <Setter Property="OpenPaneLength"                 Value="120"/>
     </Style>
-    
+
     <Style TargetType="mah:HamburgerMenu" x:Key="AttemptsMenu">
         <Setter Property="Background" Value="{StaticResource Green}"/>
         <Setter Property="Foreground" Value="{StaticResource White}"/>
@@ -869,8 +927,8 @@
         <Setter Property="Background" Value="#1E88E5"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="PaneBackground" Value="#1565C0"/>
-        <Setter Property="CompactPaneLength"              Value="80"/>
-        <Setter Property="OpenPaneLength"                 Value="80"/>
+        <Setter Property="CompactPaneLength"              Value="100"/>
+        <Setter Property="OpenPaneLength"                 Value="100"/>
     </Style>
 
     <Style TargetType="ScottPlot:WpfPlot">

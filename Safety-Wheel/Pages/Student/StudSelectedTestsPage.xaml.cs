@@ -59,36 +59,46 @@ namespace Safety_Wheel.Pages.Student
         {
             Border border = new Border();
 
-            Button mainButton = new Button { Tag = test.Id.ToString() };
+            Button mainButton = new Button
+            {
+                Tag = test.Id.ToString()
+            };
+
             if (Application.Current.TryFindResource("ButtonTests") is Style st)
                 mainButton.Style = st;
 
-            DockPanel dockPanel = new DockPanel
+            Grid contentGrid = new Grid
             {
-                Width = mainButton.Width,
-                LastChildFill = true,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Center,
-                Height = mainButton.Height,
+                Width = 1200,
+                VerticalAlignment = VerticalAlignment.Center
             };
 
-            Border leftContainer = new Border
-            {
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(300, 0, 0, 0),
-                Child = new TextBlock
-                {
-                    Text = test.Name,
-                    FontSize = 36,
-                    FontWeight = FontWeights.Bold,
-                    TextAlignment = TextAlignment.Left,
-                    TextWrapping = TextWrapping.Wrap,
-                    MaxWidth = 300
-                }
+            contentGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }); // название
+            contentGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }); // режимы
+            contentGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star) }); // play
 
+            TextBlock titleText = new TextBlock
+            {
+                Text = test.Name,
+                FontSize = 36,
+                FontWeight = FontWeights.Bold,
+                TextWrapping = TextWrapping.Wrap,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(20, 0, 20, 0)
             };
-            DockPanel.SetDock(leftContainer, Dock.Left);
+            Grid.SetColumn(titleText, 0);
+
+            StackPanel iconsContainer = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            AddIconWithIndicator(iconsContainer, test.Id, 1, "relax_icon.png");
+            AddIconWithIndicator(iconsContainer, test.Id, 2, "time_icon.png");
+            AddIconWithIndicator(iconsContainer, test.Id, 3, "exam_icon.png");
+
+            Grid.SetColumn(iconsContainer, 1);
 
             Button playBtn = new Button
             {
@@ -96,41 +106,27 @@ namespace Safety_Wheel.Pages.Student
                 FontSize = 18,
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(0, 0, 300, 0),
-                Cursor = Cursors.Hand
+                Cursor = Cursors.Hand,
+                Margin = new Thickness(0, 0, 20, 0)
             };
 
             if (Application.Current.TryFindResource("PlayButtonOptions") is Style playStyle)
                 playBtn.Style = playStyle;
 
-            DockPanel.SetDock(playBtn, Dock.Right);
+            Grid.SetColumn(playBtn, 2);
 
-            Border centerContainer = new Border
+            contentGrid.Children.Add(titleText);
+            contentGrid.Children.Add(iconsContainer);
+            contentGrid.Children.Add(playBtn);
+
+            Viewbox viewbox = new Viewbox
             {
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(10, 0, 10, 0)
+                Stretch = Stretch.Uniform,
+                StretchDirection = StretchDirection.DownOnly
             };
 
-            StackPanel iconsContainer = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(0)
-            };
-
-            AddIconWithIndicator(iconsContainer, test.Id, 1, "relax_icon.png");
-            AddIconWithIndicator(iconsContainer, test.Id, 2, "time_icon.png");
-            AddIconWithIndicator(iconsContainer, test.Id, 3, "exam_icon.png");
-
-            centerContainer.Child = iconsContainer;
-
-
-            dockPanel.Children.Add(leftContainer);
-            dockPanel.Children.Add(playBtn);
-            dockPanel.Children.Add(centerContainer);
-            mainButton.Content = dockPanel;
+            viewbox.Child = contentGrid;
+            mainButton.Content = viewbox;
 
             mainButton.Click += (s, e) =>
             {
@@ -153,10 +149,11 @@ namespace Safety_Wheel.Pages.Student
                         NavigationService.Navigate(new StudTestInfo(selected, TypeTest));
                 }
             };
-            border.Child = mainButton;
 
+            border.Child = mainButton;
             GeneratedOptionsPanel.Children.Add(border);
         }
+
 
         private void AddIconWithIndicator(StackPanel container, decimal testId, int testType, string iconName)
         {

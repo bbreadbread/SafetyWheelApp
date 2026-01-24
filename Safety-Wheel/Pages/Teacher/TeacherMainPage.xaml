@@ -25,7 +25,7 @@
                 <core:MenuTypeToMultiVisibilityConverter x:Key="MenuTypeToMultiVisibilityConverter" />
                 <core:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
                 <DataTemplate x:Key="MenuItemTemplate" DataType="{x:Type viewModels:MenuItemViewModel}">
-                    <Grid x:Name="RootGrid" Height="48" Background="Transparent">
+                    <Grid x:Name="RootGrid" Height="90" Background="Transparent">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type mah:HamburgerMenu}}, Path=CompactPaneLength}" />
                             <ColumnDefinition Width="*" />
@@ -39,6 +39,23 @@
                         </DataTrigger>
                     </DataTemplate.Triggers>
                 </DataTemplate>
+
+                <DataTemplate x:Key="MenuItemTemplateLittle" DataType="{x:Type viewModels:MenuItemViewModel}">
+                    <Grid x:Name="RootGrid" Height="50" Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type mah:HamburgerMenu}}, Path=CompactPaneLength}" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <ContentControl Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{Binding Icon}" Focusable="False" />
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" FontSize="16" Text="{Binding Label}" />
+                    </Grid>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type mah:HamburgerMenu}}, Path=IsPaneOpen}" Value="False">
+                            <Setter TargetName="RootGrid" Property="ToolTip" Value="{Binding ToolTip, Mode=OneWay}" />
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+                
                 <!-- these are the templates for the view models -->
                 <DataTemplate DataType="{x:Type viewModels:TeacherSelectedStudViewModel}"/>
                 <DataTemplate DataType="{x:Type viewModels:SelectedDateViewModel}"/>
@@ -61,29 +78,30 @@
                                HamburgerVisibility="Collapsed" 
                                Style="{StaticResource MainMenuStyle}" 
                                DockPanel.Dock="Left"/>
-                               
+
             <mah:HamburgerMenu Grid.Column="1"
                                x:Name="PeopleMenuControl"
                                DisplayMode="CompactInline" 
                                IsPaneOpen="False" 
                                
                                ItemsSource="{Binding MenuItems}"
-                               ItemTemplate="{StaticResource MenuItemTemplate}" 
+                               ItemTemplate="{StaticResource MenuItemTemplateLittle}" 
                                
                                SelectedItem="{Binding SelectedStudent, Mode=TwoWay}"
                                SelectedIndex="0"
                                HamburgerVisibility="Collapsed" 
-                               Style="{StaticResource PeoplesMenu}"/>
+                               Style="{StaticResource PeoplesMenu}"
+                               Visibility="{Binding SecondMenuVisible, Converter={StaticResource BoolToVisibilityConverter}}"/>
 <!--ItemInvoked="DatesMenuControl_ItemInvoked"-->
             <mah:HamburgerMenu x:Name="DatesMenuControl" Grid.Column="2"
                                
                                DisplayMode="CompactInline" 
                                IsPaneOpen="False" 
                                
-                               ItemTemplate="{StaticResource MenuItemTemplate}" 
+                               ItemTemplate="{StaticResource MenuItemTemplateLittle}" 
                                ItemsSource="{Binding MenuDatesItems}"                                
                                OptionsItemsSource="{Binding MenuOptionDateItems}"
-                               OptionsItemTemplate="{StaticResource MenuItemTemplate}"
+                               OptionsItemTemplate="{StaticResource MenuItemTemplateLittle}"
                                ItemInvoked="HamburgerMenu_ItemInvoked"
                                
                                SelectedItem="{Binding SelectedDate, Mode=TwoWay}" SelectedIndex="0" 
@@ -111,9 +129,11 @@
                            Grid.Column="1" 
                            Grid.Row="0"
                            NavigationUIVisibility="Hidden" 
-                           HorizontalAlignment="Stretch" 
-                           VerticalAlignment="Top"/>
+                           HorizontalAlignment="Center" 
+                           VerticalAlignment="Top"
+                           Source="TeacherWelcomePage.xaml"/>
 
+                    <!--Попытки для прохождений-->
                     <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
                               Height="220"
                               ItemsSource="{Binding MenuAttemptsItems}"
@@ -140,17 +160,20 @@
 
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Время"
-                                        Binding="{Binding Tag.StartedAt,
-                                                  StringFormat=HH:mm}" />
+                                         Binding="{Binding Tag.StartedAt, StringFormat=HH:mm}" />
 
                             <DataGridTextColumn Header="Результат"
-                                        Binding="{Binding Tag.Score}" />
+                                            Binding="{Binding Tag.Score}" />
 
                             <DataGridTextColumn Header="Тест"
-                                        Binding="{Binding Tag.Test.Name}" />
+                                            Binding="{Binding Tag.Test.Name}" />
+
+                            <DataGridTextColumn Header="Предмет"
+                                            Binding="{Binding Tag.Subject.Name}" />
                         </DataGrid.Columns>
                     </DataGrid>
 
+                    <!--Тесты для статистики-->
                     <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
                               Height="220"
                               IsReadOnly="True"
@@ -179,6 +202,7 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Название теста"
                                                 Binding="{Binding Tag.Name, StringFormat=HH:mm}" />
+                            
                             <DataGridTextColumn Header="Предмет"
                                                 Binding="{Binding Tag.Subject.Name}" />
                         </DataGrid.Columns>

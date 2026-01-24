@@ -1,10 +1,12 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using MahApps.Metro.Controls;
 using Safety_Wheel.Models;
 using Safety_Wheel.Pages.Student;
+using Safety_Wheel.Pages.Teacher;
 using Safety_Wheel.Services;
 using Safety_Wheel.ViewModels;
 
@@ -14,14 +16,18 @@ namespace Safety_Wheel
     {
         private readonly TeacherService teacherService = new();
         private readonly StudentService studentService = new();
+        private readonly AttemptService attemptService = new();
 
         private Student _selectedStudent;
+
 
         public MainViewModel VM { get; }
 
         public MainWindow()
         {
             InitializeComponent();
+            TeacherLoginRule.TeacherService = teacherService;
+            TeacherLoginRule.OriginalLogin = CurrentUser.Login;
             VM = new MainViewModel();
             DataContext = VM;
             InitMonths();
@@ -29,35 +35,63 @@ namespace Safety_Wheel
 
         public void UpdateUserName(string userName)
         {
-            HeaderUserNameTextBlock.Text = userName ?? string.Empty;
+            VM.UserFullName = userName ?? string.Empty;
         }
+
 
         private void BackImage_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (!MainFrame.CanGoBack) return;
 
             var currentPage = MainFrame.Content as Page;
-            if (currentPage is StudTest)
-            {
-                var confirm = new ClosedWindow(
-                    "Вы намерены вернуться к выбору теста.",
-                    "Тест будет считаться завершенным.")
-                {
-                    Owner = this,
-                    WindowStartupLocation = WindowStartupLocation.CenterOwner
-                };
 
-                if (confirm.ShowDialog() == true)
-                {
-                    StudTest._isTestActivated = false;
-                    MainFrame.Navigate(new StudSelectedTestsPage(StudHomePage.NameDiscipline));
-                }
-            }
-            else
+            switch (currentPage)
             {
-                MainFrame.GoBack();
+                case StudTest:
+                    {
+                        var confirm = new ClosedWindow(
+                            "Вы намерены вернуться к выбору теста.",
+                            "Тест будет считаться завершенным.")
+                        {
+                            Owner = this,
+                            WindowStartupLocation = WindowStartupLocation.CenterOwner
+                        };
+
+                        if (confirm.ShowDialog() == true)
+                        {
+                            StudTest._isTestActivated = false;
+                            MainFrame.Navigate(new StudSelectedTestsPage(StudHomePage.NameDiscipline));
+                        }
+
+                        break;
+                    }
+
+                case StudHomePage:
+                case TeacherMainPage:
+                    {
+                        var confirm = new ClosedWindow(
+                            "Вы намерены выйти из аккаунта",
+                            null)
+                        {
+                            Owner = this,
+                            WindowStartupLocation = WindowStartupLocation.CenterOwner
+                        };
+
+                        if (confirm.ShowDialog() == true)
+                        {
+                            Clear();
+                            MainFrame.Navigate(new MainPage());
+                        }
+
+                        break;
+                    }
+
+                default:
+                    MainFrame.GoBack();
+                    break;
             }
         }
+
 
         private void ExitImage_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -69,6 +103,7 @@ namespace Safety_Wheel
 
             if (confirm.ShowDialog() == true)
             {
+                StudTest._isTestActivated = false;
                 Clear();
                 MainFrame.Navigate(new MainPage());
             }
@@ -88,7 +123,16 @@ namespace Safety_Wheel
 
         private void TeacherManagerFlyout_IsOpenChanged(object sender, RoutedEventArgs e)
         {
-            if (TeacherManagerFlyout.IsOpen) ReloadStudents();
+            if (!TeacherManagerFlyout.IsOpen) return;
+
+            VM.StudentName = VM.StudentLogin = VM.StudentPassword = "";
+            VM.TeacherName = VM.TeacherLogin = VM.TeacherPassword = "";
+
+            StudentLoginRule.OriginalLogin = null;
+            TeacherLoginRule.OriginalLogin = CurrentUser.Login;
+
+            ReloadStudents();       
+            LoadTeacherData();
         }
 
         private void ReloadStudents()
@@ -104,53 +148,44 @@ namespace Safety_Wheel
 
         private void AddStudent_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(NameTextBox.Text) ||
-                string.IsNullOrWhiteSpace(LoginTextBox.Text) ||
-                string.IsNullOrWhiteSpace(PasswordTextBox.Text))
-            {
-                MessageBox.Show("Заполните все поля");
+            if (!ValidatePanel(StudentInputsPanel))
                 return;
-            }
-
-            if (teacherService.UserExistsByLogin(LoginTextBox.Text))
-            {
-                MessageBox.Show("Пользователь с таким логином уже существует");
-                return;
-            }
 
             var student = new Student
             {
-                Name = NameTextBox.Text,
-                Login = LoginTextBox.Text,
-                Password = PasswordTextBox.Text,
+                Name = VM.StudentName,
+                Login = VM.StudentLogin,
+                Password = VM.StudentPassword,
                 TeachersId = CurrentUser.Id
             };
-
 
             studentService.Add(student);
             ClearInputs();
             ReloadStudents();
         }
 
+
+
         private void SaveStudent_Click(object sender, RoutedEventArgs e)
         {
-            if (_selectedStudent == null)
-            {
-                MessageBox.Show("Выберите ученика");
-                return;
-            }
+            if (_selectedStudent == null) return;
 
-            Student student = studentService.GetCurrentStudent(_selectedStudent.Id);
+            foreach (var tb in StudentInputsPanel.Children.OfType<TextBox>())
+                tb.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
+
+            if (!ValidatePanel(StudentInputsPanel))
+                return;
+
+            var student = studentService.GetCurrentStudent(_selectedStudent.Id);
             if (student == null) return;
 
-            student.Name = NameTextBox.Text;
-            student.Login = LoginTextBox.Text;
-            student.Password = PasswordTextBox.Text;
+            student.Name = VM.StudentName;
+            student.Login = VM.StudentLogin;
+            student.Password = VM.StudentPassword;
 
             studentService.Update(student);
             ReloadStudents();
         }
-
         private void DeleteStudent_Click(object sender, RoutedEventArgs e)
         {
             if (_selectedStudent == null) return;
@@ -174,14 +209,25 @@ namespace Safety_Wheel
                 NameTextBox.Text = student.Name;
                 LoginTextBox.Text = student.Login;
                 PasswordTextBox.Text = student.Password;
+
+                StudentLoginRule.OriginalLogin = student.Login;
+            }
+            else
+            {
+                StudentLoginRule.OriginalLogin = null;
+                ClearInputs();
             }
         }
 
         private void ClearInputs()
         {
-            NameTextBox.Clear();
-            LoginTextBox.Clear();
-            PasswordTextBox.Clear();
+            VM.StudentName = "";
+            VM.StudentLogin = "";
+            VM.StudentPassword = "";
+            StudentLoginRule.OriginalLogin = null;
+
+            StudentsGrid.SelectedItem = null;
+            _selectedStudent = null;
         }
 
         private void Calendar_DisplayModeChanged(object sender, CalendarModeChangedEventArgs e)
@@ -189,6 +235,39 @@ namespace Safety_Wheel
             if (sender is Calendar calendar && calendar.DisplayMode != CalendarMode.Year)
                 calendar.DisplayMode = CalendarMode.Year;
         }
+
+        private void LoadTeacherData()
+        {
+            var teacher = teacherService.GetTeacherById(CurrentUser.Id);
+
+            VM.TeacherName = teacher.Name;
+            VM.TeacherLogin = teacher.Login;
+            VM.TeacherPassword = teacher.Password;
+        }
+
+        private void UpdateTeacher_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var tb in TeacherInputsPanel.Children.OfType<TextBox>())
+                tb.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
+
+            if (!ValidatePanel(TeacherInputsPanel))
+                return;
+
+            var teacher = teacherService.GetTeacherById(CurrentUser.Id);
+            teacher.Name = VM.TeacherName;
+            teacher.Login = VM.TeacherLogin;
+            teacher.Password = VM.TeacherPassword;
+
+            teacherService.Update(teacher);
+
+            CurrentUser.Login = teacher.Login;
+            TeacherLoginRule.OriginalLogin = teacher.Login;
+            VM.UserFullName = teacher.Name;
+
+            MessageBox.Show("Данные преподавателя успешно обновлены",
+                            "Готово", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
 
         //месяцы
 
@@ -223,6 +302,38 @@ namespace Safety_Wheel
             if (!int.TryParse(YearTextBox.Text, out int year)) return;
 
             VM.SelectedMonthDate = new DateTime(year, month.Number, 1);
+        }
+        //закртие
+        private void MainWindow_Closing(object sender, CancelEventArgs e)
+        {
+            var txt = "";
+            if (StudTest._isTestActivated == true)
+                txt = "Попытка аннулируется.";
+            else txt = "Перед закрытием убедитесь, что сохранили прогресс";
+
+            var confirm = new ClosedWindow("Вы намерены закрыть приложение", txt)
+            {
+                WindowStartupLocation = WindowStartupLocation.CenterScreen
+            };
+
+            if (confirm.ShowDialog() == false)
+            {
+                e.Cancel = true;
+            }
+            if (StudTest._isTestActivated == true) attemptService.Remove(StudTest._attempt);
+        }
+        private bool ValidatePanel(StackPanel panel)
+        {
+            var firstError = panel.Children
+                                  .OfType<TextBox>()
+                                  .FirstOrDefault(tb => Validation.GetHasError(tb));
+
+            if (firstError == null) return true;
+
+            var msg = Validation.GetErrors(firstError).FirstOrDefault()?.ErrorContent ?? "Ошибка";
+            MessageBox.Show((string)msg, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+            firstError.Focus();
+            return false;
         }
 
     }
