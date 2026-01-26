@@ -43,23 +43,5 @@ namespace Safety_Wheel.Services
                 Subjects.Add(subject);
             }
         }
-
-        public void Remove(Subject subject)
-        {
-            _db.Remove(subject);
-            if (Commit() > 0)
-                if (Subjects.Contains(subject))
-                    Subjects.Remove(subject);
-        }
-
-        public void Update(Subject subject)
-        {
-            var existing = _db.Subjects.Find(subject.Id);
-            if (existing != null)
-            {
-                existing.Name = subject.Name;
-                Commit();
-            }
-        }
     }
 }

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Safety_Wheel.ViewModels
+namespace Safety_Wheel.ViewModels.CreateTestsVM
 {
     public class TestListItemViewModel : ObservableObject
     {
@@ -31,7 +31,7 @@ namespace Safety_Wheel.ViewModels
             get => Test.IsPublic;
             set
             {
-                Test.IsPublic = value;                
+                Test.IsPublic = value;
                 OnPropertyChanged();
                 _testService.Update(Test);
             }

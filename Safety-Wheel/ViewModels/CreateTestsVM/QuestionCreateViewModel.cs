@@ -3,7 +3,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.IO;
 
-namespace Safety_Wheel.ViewModels
+namespace Safety_Wheel.ViewModels.CreateTestsVM
 {
     public class QuestionCreateViewModel : ObservableObject
     {
@@ -34,12 +34,39 @@ namespace Safety_Wheel.ViewModels
                     return;
                 }
 
-                var fullPath = Path.IsPathRooted(value)
-                    ? value
-                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, value);
+                // Если путь уже содержит "Images/", делаем полный путь для отображения
+                if (value.StartsWith("Images/", StringComparison.OrdinalIgnoreCase))
+                {
+                    var fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, value);
+                    _previewImagePath = fullPath;
+                }
+                else
+                {
+                    _previewImagePath = value;
+                }
 
-                _previewImagePath = fullPath;
                 OnPropertyChanged();
+            }
+        }
+
+        public string PicturePath
+        {
+            get => NewQuestion.PicturePath;
+            set
+            {
+                NewQuestion.PicturePath = value;
+                OnPropertyChanged();
+
+                // При изменении PicturePath обновляем PreviewImagePath для отображения
+                if (!string.IsNullOrEmpty(value))
+                {
+                    if (value.StartsWith("Images/", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, value);
+                        _previewImagePath = fullPath;
+                        OnPropertyChanged(nameof(PreviewImagePath));
+                    }
+                }
             }
         }
 
@@ -86,20 +113,6 @@ namespace Safety_Wheel.ViewModels
 
         public bool IsSingleImage => !IsMultiImage;
 
-        public string PicturePath
-        {
-            get => NewQuestion.PicturePath;
-            set
-            {
-                var fullPath = Path.IsPathRooted(value)
-                    ? value
-                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, value);
-
-                NewQuestion.PicturePath = fullPath;
-                OnPropertyChanged();
-            }
-        }
-
 
 
         public QuestionCreateViewModel(Question question, bool isGhost, Action onActivated)
@@ -108,7 +121,19 @@ namespace Safety_Wheel.ViewModels
             IsGhost = isGhost;
             _onActivated = onActivated;
 
-            PreviewImagePath = question.PicturePath;
+            if (!string.IsNullOrEmpty(question.PicturePath))
+            {
+                if (question.PicturePath.StartsWith("Images/", StringComparison.OrdinalIgnoreCase))
+                {
+                    var fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, question.PicturePath);
+                    _previewImagePath = File.Exists(fullPath) ? fullPath : null;
+                }
+            }
+            else
+            {
+                _previewImagePath = null;
+            }
+
             SyncGhostOptions();
         }
 
@@ -121,6 +146,16 @@ namespace Safety_Wheel.ViewModels
         {
             Options.Clear();
             SyncGhostOptions();
+        }
+
+        public void RemoveOption(OptionCreateViewModel option)
+        {
+            if (option.IsGhost)
+                return;
+
+            Options.Remove(option);
+            SyncGhostOptions();
+            RecalculateQuestionType();
         }
 
         public void SyncGhostOptions()
@@ -160,19 +195,21 @@ namespace Safety_Wheel.ViewModels
 
             int correctCount = Options
                 .Where(o => !o.IsGhost)
-                .Count(o => (bool)o.IsCorrect);
+                .Count(o => o.IsCorrect == true);
 
             NewQuestion.QuestionType = correctCount <= 1 ? 1 : 3;
         }
 
         public void SetQuestionImage(string path)
         {
-            var fullPath = Path.IsPathRooted(path)
-                ? path
-                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
+            PicturePath = path;
 
-            PicturePath = fullPath;
-            PreviewImagePath = fullPath;
+            if (path.StartsWith("Images/", StringComparison.OrdinalIgnoreCase))
+            {
+                var fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
+                _previewImagePath = fullPath;
+                OnPropertyChanged(nameof(PreviewImagePath));
+            }
         }
 
     }

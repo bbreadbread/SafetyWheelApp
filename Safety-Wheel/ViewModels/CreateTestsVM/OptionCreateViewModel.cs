@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Windows.Input;
 using System.IO;
 
-namespace Safety_Wheel.ViewModels
+namespace Safety_Wheel.ViewModels.CreateTestsVM
 {
     public class OptionCreateViewModel : ObservableObject
     {
@@ -57,6 +57,7 @@ namespace Safety_Wheel.ViewModels
             _parent = parent;
 
             ShowPreviewCommand = new RelayCommand(_ => ShowPreview());
+            DeleteCommand = new RelayCommand(_ => _parent.RemoveOption(this));
         }
 
         private void RecalculateGhostState()
@@ -66,13 +67,10 @@ namespace Safety_Wheel.ViewModels
 
         public void SetOptionImage(string path)
         {
-            var fullPath = Path.IsPathRooted(path)
-                ? path
-                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
-
-            Value = fullPath;
+            Value = path;
         }
 
+        public ICommand DeleteCommand { get; }
 
         public ICommand ShowPreviewCommand { get; }
 
@@ -82,13 +80,5 @@ namespace Safety_Wheel.ViewModels
         }
 
 
-    }
-    public class RelayCommand : ICommand
-    {
-        private readonly Action<object> _execute;
-        public RelayCommand(Action<object> execute) => _execute = execute;
-        public bool CanExecute(object parameter) => true;
-        public void Execute(object parameter) => _execute(parameter);
-        public event EventHandler CanExecuteChanged;
     }
 }

@@ -85,16 +85,6 @@ namespace Safety_Wheel.Services
                   .ToList();
         }
 
-        public async Task<List<Question>> GetQuestionsForTestAsync(int testId)
-        {
-            return await _db.Questions
-                .AsNoTracking()
-                .Where(q => q.TestId == testId)
-                .Include(q => q.Options)
-                .ToListAsync();
-        }
-
-
         public void DeleteQuestion(int questionId)
         {
             var question = _db.Questions

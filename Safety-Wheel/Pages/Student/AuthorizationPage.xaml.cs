@@ -36,7 +36,7 @@ namespace Safety_Wheel.Pages.Student
         { 
             _teacherService.GetAll();
             string login = TbLogin.Text.Trim();
-            string password = TbPassword.Text.Trim();
+            string password = TbPassword.Password.Trim();
 
             _studentService.GetAllStudents();
             var student = _studentService.Students.FirstOrDefault(s =>
@@ -56,7 +56,6 @@ namespace Safety_Wheel.Pages.Student
                 return;
             }
 
-           
             var teacher = _teacherService.Teachers.FirstOrDefault(t =>
                             t.Login == login && t.Password == password);
             if (teacher != null)

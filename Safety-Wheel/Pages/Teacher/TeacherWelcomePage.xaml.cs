@@ -21,16 +21,30 @@ namespace Safety_Wheel.Pages.Teacher
     /// </summary>
     public partial class TeacherWelcomePage : Page
     {
+        bool _isAttemts = false;
         public TeacherWelcomePage()
         {
             InitializeComponent();
         }
+        
+        public TeacherWelcomePage(bool isAttemts)
+        {
+            _isAttemts = isAttemts;
+            InitializeComponent();
+            if (isAttemts == true)
+            {
+                GeneralWelcome.Visibility = Visibility.Collapsed;
+                AttemptsWelcome.Visibility = Visibility.Visible;
+            }
+        }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            var vm = DataContext as MainViewModel;
-            vm?.ResetApplicationState();
+            if (_isAttemts == false)
+            {
+                var vm = DataContext as MainViewModel;
+                vm?.ResetApplicationState();
+            }
         }
-
     }
 }

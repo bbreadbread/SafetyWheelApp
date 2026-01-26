@@ -108,12 +108,16 @@ namespace Safety_Wheel.Pages.Student.TestTypes
                     }
 
                     img.IsEnabled = false;
+                    img.IsHitTestVisible = false;
                     img.Cursor = Cursors.Arrow;
+
                     if (overlay.Children.Count > 1 && overlay.Children[1] is Image magn)
                     {
-                        magn.IsEnabled = false;
-                        magn.Cursor = Cursors.Arrow;
+                        magn.IsEnabled = true;
+                        magn.IsHitTestVisible = true; 
+                        magn.Cursor = Cursors.Hand;
                     }
+
                     border.Cursor = Cursors.Arrow;
                 }
             }
@@ -142,9 +146,13 @@ namespace Safety_Wheel.Pages.Student.TestTypes
             foreach (var border in GeneratedAnswersPanel.Children.OfType<Border>())
             {
                 var overlay = border.Child as Grid;
-                if (overlay?.Children[0] is Image img &&
-                    img.Tag is string tg &&
-                    int.TryParse(tg, out int optionNumber))
+                if (overlay?.Children[1] is Image mag && mag.Tag is string magstr && magstr == "mag")
+                {
+                    mag.IsHitTestVisible = true;
+                    mag.IsEnabled = true;
+                }
+
+                if (overlay?.Children[0] is Image img && img.Tag is string tg && int.TryParse(tg, out int optionNumber))
                 {
                     bool isCorrectOption = correctOptionNumbers.Contains(optionNumber);
                     bool isStudentSelected = studentSelectedOptions.Contains(optionNumber);
@@ -185,6 +193,7 @@ namespace Safety_Wheel.Pages.Student.TestTypes
                     }
 
                     img.IsEnabled = false;
+                    img.IsHitTestVisible = false;
                     img.Cursor = Cursors.Arrow;
                     border.Cursor = Cursors.Arrow;
                 }
@@ -203,16 +212,13 @@ namespace Safety_Wheel.Pages.Student.TestTypes
                 AppDomain.CurrentDomain.BaseDirectory,
                 option.TextAnswer);
 
-            string magnifierPath = System.IO.Path.Combine(
-                AppDomain.CurrentDomain.BaseDirectory,
-                "magnifier_icon.png");
-
+            int size = 240;
             Image image = new Image
             {
                 Source = new BitmapImage(new Uri(imagePath, UriKind.RelativeOrAbsolute)),
                 Tag = tagValue,
-                Width = 230,
-                Height = 230,
+                Width = size,
+                Height = size,
                 Stretch = Stretch.Uniform,
                 RenderTransformOrigin = new Point(0.5, 0.5),
                 Cursor = Cursors.Hand
@@ -230,13 +236,14 @@ namespace Safety_Wheel.Pages.Student.TestTypes
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Top,
                 Margin = new Thickness(0, 5, 5, 0),
-                Opacity = 0.8
+                Opacity = 0.8,
+                Tag = "mag"
             };
 
             Grid grid = new Grid
             {
-                Width = 240,
-                Height = 240,
+                Width = size - 10,
+                Height = size - 10,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
                 Background = Brushes.Transparent
@@ -257,8 +264,8 @@ namespace Safety_Wheel.Pages.Student.TestTypes
                 Child = grid,
                 BorderBrush = Brushes.LightGray,
                 BorderThickness = new Thickness(1),
-                Margin = new Thickness(15),
-                Padding = new Thickness(15),
+                Margin = new Thickness(10),
+                Padding = new Thickness(12),
                 CornerRadius = new CornerRadius(5),
                 Background = Brushes.White,
                 Cursor = Cursors.Hand
@@ -306,7 +313,6 @@ namespace Safety_Wheel.Pages.Student.TestTypes
 
             magnifier.MouseDown += (s, e) =>
             {
-                if (_isLocked) return;
                 e.Handled = true;
 
                 var mainWindow = Application.Current.MainWindow;

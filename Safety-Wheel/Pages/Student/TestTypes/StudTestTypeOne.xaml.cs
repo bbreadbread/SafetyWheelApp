@@ -51,7 +51,7 @@ namespace Safety_Wheel.Pages.Student.TestTypes
 
                 if (!string.IsNullOrEmpty(_question.PicturePath))
                 {
-                    PathImage = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _question.PicturePath.TrimStart('/', '\\')); // убираем лишний слэш
+                    PathImage = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _question.PicturePath.TrimStart('/', '\\'));
                 }
             }
             if (isThreeType == null)

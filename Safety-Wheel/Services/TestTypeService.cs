@@ -20,18 +20,6 @@ namespace Safety_Wheel.Services
             GetAll();
         }
 
-        public void Add(TestType testType)
-        {
-            var _testType = new TestType
-            {
-                Name = testType.Name,
-                Description = testType.Description,
-                TimeLimitSecond = testType.TimeLimitSecond
-            };
-            _db.Add(_testType);
-            Commit();
-        }
-
         public int Commit() => _db.SaveChanges();
 
         public void GetAll()
@@ -49,26 +37,6 @@ namespace Safety_Wheel.Services
                 .FirstOrDefault(t => t.Id == type);
 
             return testType;
-        }
-
-        public void Remove(TestType testType)
-        {
-            _db.Remove(testType);
-            if (Commit() > 0)
-                if (TestTypes.Contains(testType))
-                    TestTypes.Remove(testType);
-        }
-
-        public void Update(TestType testType)
-        {
-            var existing = _db.TestTypes.Find(testType.Id);
-            if (existing != null)
-            {
-                existing.Name = testType.Name;
-                existing.Description = testType.Description;
-                existing.TimeLimitSecond = testType.TimeLimitSecond;
-                Commit();
-            }
         }
     }
 }

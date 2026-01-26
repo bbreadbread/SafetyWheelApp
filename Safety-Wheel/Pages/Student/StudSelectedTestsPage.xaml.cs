@@ -29,6 +29,7 @@ namespace Safety_Wheel.Pages.Student
 
         TestService _testService = new();
         private Button? _selectedButton;
+
         public StudSelectedTestsPage(string typeDiscipline)
         {
             TypeDiscipline = typeDiscipline;
@@ -37,6 +38,7 @@ namespace Safety_Wheel.Pages.Student
 
             LoadTests();
         }
+
         private void LoadTests()
         {
             _testService.GetAll();
@@ -153,8 +155,6 @@ namespace Safety_Wheel.Pages.Student
             border.Child = mainButton;
             GeneratedOptionsPanel.Children.Add(border);
         }
-
-
         private void AddIconWithIndicator(StackPanel container, decimal testId, int testType, string iconName)
         {
             var attemptService = new AttemptService();
@@ -290,11 +290,6 @@ namespace Safety_Wheel.Pages.Student
             {
                 return Brushes.Red;
             }
-        }
-        private void RefreshTests()
-        {
-            _testService.GetAll();
-            LoadTests();
         }
 
         private void ButtonRelax_Click(object sender, RoutedEventArgs e)

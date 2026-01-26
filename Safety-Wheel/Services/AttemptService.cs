@@ -81,6 +81,8 @@ namespace Safety_Wheel.Services
         }
         public void Remove(Attempt attempt)
         {
+            if (attempt.Id == 0) return;
+
             _db.Remove(attempt);
             if (Commit() > 0)
                 if (Attempts.Contains(attempt))

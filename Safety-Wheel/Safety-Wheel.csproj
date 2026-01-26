@@ -13,11 +13,13 @@
   <ItemGroup>
     <None Remove="connection.settings" />
     <None Remove="Images\add_picture_icon.png" />
+    <None Remove="Images\add_picture_icon_2.png" />
     <None Remove="Images\back_logo.png" />
     <None Remove="Images\comments_icon.png" />
     <None Remove="Images\delete_icon.png" />
     <None Remove="Images\exam_icon.png" />
     <None Remove="Images\exit_logo.png" />
+    <None Remove="Images\first_arrow_icon.png" />
     <None Remove="Images\icon.ico" />
     <None Remove="Images\magnifier_icon.png" />
     <None Remove="Images\plus_icon.png" />
@@ -296,6 +298,9 @@
     <Content Include="Images\add_picture_icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Images\add_picture_icon_2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Images\back_logo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -311,6 +316,9 @@
     <Content Include="Images\exit_logo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Images\first_arrow_icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Images\icon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -321,6 +329,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\relax_icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\second_arrow_icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\sort_icon.png">
@@ -1067,7 +1078,9 @@
     <Content Include="Images\time_icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\wheel.ico" />
+    <Content Include="Images\wheel.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

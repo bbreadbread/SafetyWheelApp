@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 
-namespace Safety_Wheel.ViewModels
+namespace Safety_Wheel.ViewModels.CreateTestsVM
 {
     public class TeacherCreateTestViewModel : ObservableObject
     {
@@ -40,7 +40,7 @@ namespace Safety_Wheel.ViewModels
             IsEditMode = false;
             Test = new Test();
             AddGhostQuestion();
-        } 
+        }
 
         public TeacherCreateTestViewModel(Test test)
         {
@@ -73,7 +73,6 @@ namespace Safety_Wheel.ViewModels
 
             if (IsEditMode)
             {
-
                 var dbQuestions = _questionService
                     .GetQuestiosForCurrentTest(Test.Id)
                     .ToList();

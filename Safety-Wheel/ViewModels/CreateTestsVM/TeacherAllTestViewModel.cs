@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 
-namespace Safety_Wheel.ViewModels
+namespace Safety_Wheel.ViewModels.CreateTestsVM
 {
     public class TeacherAllTestViewModel : ObservableObject
     {

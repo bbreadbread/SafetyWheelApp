@@ -3,7 +3,7 @@ using Safety_Wheel.Services;
 using System;
 using System.Collections.ObjectModel;
 
-namespace Safety_Wheel.ViewModels
+namespace Safety_Wheel.ViewModels.AttemptsVM
 {
     public class AttemptDetailsViewModel : ObservableObject
     {

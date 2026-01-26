@@ -40,6 +40,7 @@ namespace Safety_Wheel.Pages.Student
         private TestTypeService testTypeService = new();
         public string NameTest { get; set; }
         public string SubjectName { get; set; }
+        public string ActionStatus { get; set; }
 
         private string _timeLimit;
         private string _commentForQuestion;
@@ -47,7 +48,6 @@ namespace Safety_Wheel.Pages.Student
         private int _correctCount;
         private int _uncorrectCount;
         private int _tmptyCount;
-        private string _statusTest;
 
         
         public static DispatcherTimer _timer = new();
@@ -67,7 +67,7 @@ namespace Safety_Wheel.Pages.Student
                 _isTestActivated = true;
 
                 InitializeTimer();
-                StatusTest = "Прохождение теста: ";
+                ActionStatus = "Прохождение теста: ";
                 _attempt = new Attempt
                 {
                     StudentsId = CurrentUser.Id,
@@ -81,8 +81,9 @@ namespace Safety_Wheel.Pages.Student
             }
             else
             {
-                StatusTest = "Результаты теста: ";
                 _attempt = atReady;
+                string timeStr = _attempt.FinishedAt?.ToString("d") ?? "--:--:--";
+                ActionStatus = $"Результаты теста: {_attempt.Students.Name} / {timeStr} / ";
                 TimeLimit = (_attempt.FinishedAt - _attempt.StartedAt)?.ToString(@"mm\:ss") ?? "--:--";
             }
 
@@ -94,7 +95,7 @@ namespace Safety_Wheel.Pages.Student
 
             DataContext = this;
 
-            _questions = studentAnswerService.GetQoestiosForCurrentTest(_test.Id);
+            _questions = studentAnswerService.GetQuestiosForCurrentTest(_test.Id);
 
             InitializeComponent();
             LoadQuestionNumbers();
@@ -115,6 +116,8 @@ namespace Safety_Wheel.Pages.Student
 
             StudTestTypeOne.QuestionAnswered += closed => _currentQuestionClosed = closed;
         }
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
         private void InitializeTimer()
         {
             _timer = new DispatcherTimer();
@@ -133,6 +136,7 @@ namespace Safety_Wheel.Pages.Student
                 
                 _attempt.Score = HowManyCorrect();
                 _attempt.Status = "Завершен (Принудительный выход)";
+                _attempt.FinishedAt = DateTime.Now;
                 CompleteTest();
 
                 _attemptService.Update(_attempt);
@@ -186,6 +190,7 @@ namespace Safety_Wheel.Pages.Student
             _attempt.Score = HowManyCorrect();
             _attemptService.Update(_attempt);
             _attempt.Status = "Завершен (время истекло)";
+            _attempt.FinishedAt = DateTime.Now;
             CompleteTest();
         }
 
@@ -194,8 +199,6 @@ namespace Safety_Wheel.Pages.Student
             CorrectCount = 0;
             UncorrectCount = 0;
             EmptyCount = 0;
-
-            _attempt.FinishedAt = DateTime.Now;
 
             _canClosed = true;
             ButtonConfirm.Content = "Завершить тест";
@@ -349,7 +352,6 @@ namespace Safety_Wheel.Pages.Student
             switch (questionType)
             {
                 case 1:
-
                     if (StudTestTypeOne._studentAnswer.QuestionId != currentQuestion.Id) return;
                     studentAnswerService.Add(StudTestTypeOne._studentAnswer);
                     if (GeneratedQuestionsPanel.Children[_currentQuestionIndex] is Button currentButton)
@@ -418,7 +420,6 @@ namespace Safety_Wheel.Pages.Student
                 ButtonConfirm.Style = (Style)FindResource("ConfirmButton");
         }
 
-        
         private int HowManyCorrect()
         {
             var questionIds = _questions.Select(q => q.Id).ToList();
@@ -526,16 +527,6 @@ namespace Safety_Wheel.Pages.Student
             {
                 _typeTest = value;
                 OnPropertyChanged(nameof(TypeTest));
-            }
-        }
-
-        public string StatusTest
-        {
-            get => _statusTest;
-            set
-            {
-                _statusTest = value;
-                OnPropertyChanged(nameof(StatusTest));
             }
         }
     }

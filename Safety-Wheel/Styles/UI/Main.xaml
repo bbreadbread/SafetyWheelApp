@@ -32,7 +32,7 @@
 
     <Style TargetType="TextBox" BasedOn="{StaticResource MahApps.Styles.TextBox}" x:Key="TBoxStyle">
         <Setter Property="Height" Value="66"/>
-        <Setter Property="FontSize" Value="24"/>
+        <Setter Property="FontSize" Value="20"/>
         <Setter Property="Background" Value="{StaticResource LightBlue}"/>
         <Setter Property="mah:TextBoxHelper.ClearTextButton" Value="True"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
@@ -489,8 +489,9 @@
 
     <Style TargetType="Button" x:Key="OptionButton">
         <Setter Property="Width"      Value="580"/>
-        <Setter Property="Height"     Value="100"/>
-        <Setter Property="FontSize"   Value="24"/>
+        <Setter Property="MinHeight"     Value="100"/>
+        <Setter Property="Height"     Value="Auto"/>
+        <Setter Property="FontSize"   Value="20"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
 
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -516,6 +517,7 @@
                                 <Style TargetType="TextBlock">
                                     <Setter Property="TextWrapping"  Value="Wrap"/>
                                     <Setter Property="TextAlignment" Value="Center"/>
+                                    <Setter Property="TextTrimming" Value="None"/>
                                 </Style>
                             </ContentPresenter.Resources>
                         </ContentPresenter>
@@ -568,8 +570,9 @@
         <Setter Property="Foreground" Value="{StaticResource White}"/>
 
         <Setter Property="Width"      Value="580"/>
-        <Setter Property="Height"     Value="100"/>
-        <Setter Property="FontSize"   Value="24"/>
+        <Setter Property="MinHeight"  Value="100"/>
+        <Setter Property="Height"     Value="Auto"/>
+        <Setter Property="FontSize"   Value="20"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
 
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -750,6 +753,13 @@
                             <Setter TargetName="border" Property="Background" Value="{StaticResource HoverGreen}"/>
                             <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="{StaticResource White}"/>
                         </Trigger>
+
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource Green}"/>
+                            <Setter TargetName="border" Property="Background" Value="{StaticResource LightGreen}"/>
+                            <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="{StaticResource Green}"/>
+                        </Trigger>
+                        
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -786,6 +796,12 @@
                             <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource HoverRed}"/>
                             <Setter TargetName="border" Property="Background" Value="{StaticResource HoverRed}"/>
                             <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="{StaticResource White}"/>
+                        </Trigger>
+
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource Red}"/>
+                            <Setter TargetName="border" Property="Background" Value="{StaticResource LightRed}"/>
+                            <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="{StaticResource Red}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -824,6 +840,13 @@
                             <Setter TargetName="border" Property="Background" Value="{StaticResource HoverGold}"/>
                             <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="{StaticResource White}"/>
                         </Trigger>
+
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource Gold}"/>
+                            <Setter TargetName="border" Property="Background" Value="{StaticResource LightGold}"/>
+                            <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="{StaticResource Gold}"/>
+                        </Trigger>
+
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -836,6 +859,27 @@
         <Setter Property="Margin" Value="5"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+
+    <Style TargetType="Button" x:Key="DownGoldQuestItemButton" BasedOn="{StaticResource GoldQuestItemButton}">
+        <Setter Property="BorderBrush" Value="{StaticResource Gold}"/>
+        <Setter Property="Background" Value="{StaticResource LightGold}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="border"
+                            CornerRadius="2"
+                            BorderBrush="{StaticResource Gold}"
+                            BorderThickness="2"
+                            Background="{StaticResource Gold}">
+                        <ContentPresenter x:Name="contentPresenter"
+                                          HorizontalAlignment="Center" 
+                                          VerticalAlignment="Center"
+                                          TextElement.Foreground="{StaticResource Gold}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
     <!--///////////////////////////////-->
 
@@ -901,8 +945,8 @@
         <Setter Property="Foreground" Value="{StaticResource White}"/>
         <Setter Property="PaneBackground" Value="{StaticResource MainBlue}"/>
         <Setter Property="PaneForeground" Value="{StaticResource White}"/>
-        <Setter Property="CompactPaneLength"              Value="300"/>
-        <Setter Property="OpenPaneLength"                 Value="300"/>
+        <Setter Property="CompactPaneLength"              Value="270"/>
+        <Setter Property="OpenPaneLength"                 Value="270"/>
     </Style>
 
     <Style TargetType="mah:HamburgerMenu" x:Key="DatesMenu">

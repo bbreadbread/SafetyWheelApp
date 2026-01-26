@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Safety_Wheel.ViewModels
+namespace Safety_Wheel.ViewModels.StatisticsVM
 {
     public class StatisticsViewModel : ObservableObject
     {
@@ -22,9 +22,5 @@ namespace Safety_Wheel.ViewModels
         {
             Student = student;
         }
-    }
-
-    public class CreateTestsViewModel : ObservableObject
-    {
     }
 }

@@ -108,20 +108,7 @@ namespace Safety_Wheel.Services
             }
             return true;
         }
-
-        public List<StudentAnswer> FinalListAnswers(Attempt attempt, Test test)
-        {
-            var testQuestions = _db.Questions
-                .Where(q => q.TestId == test.Id)
-                .ToList();
-
-            var studentAnswers = _db.StudentAnswers
-                .Where(w => w.AttemptId == attempt.Id)
-                .ToList();
-
-            return studentAnswers;
-        }
-
+        
         public bool? GetQuestionCorrectness(Attempt attempt, int questionId)
         {
             var studentOptions = _db.StudentAnswers
@@ -193,7 +180,7 @@ namespace Safety_Wheel.Services
 
         }
 
-        public List<Question> GetQoestiosForCurrentTest(int currentTest)
+        public List<Question> GetQuestiosForCurrentTest(int currentTest)
         {
             return _db.Questions
                   .Include(q => q.Options)

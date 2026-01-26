@@ -5,11 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:conv="clr-namespace:Safety_Wheel.Converters"
              mc:Ignorable="d"
-             Margin="40"
-             Width="1380"
-             HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-             Loaded="UserControl_Loaded">
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch">
 
     <UserControl.Resources>
         <conv:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
@@ -20,9 +17,11 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid>
-            <ScrollViewer Grid.Row="0"
-                      VerticalScrollBarVisibility="Hidden"
-                      HorizontalScrollBarVisibility="Disabled">
+            <ScrollViewer Margin="40" Grid.Row="0" 
+                          HorizontalAlignment="Center" 
+                          VerticalAlignment="Center" 
+                          VerticalScrollBarVisibility="Hidden"
+                          HorizontalScrollBarVisibility="Disabled">
                 <Grid>
                     <ItemsControl ItemsSource="{Binding Tests}">
                         <ItemsControl.ItemsPanel>
@@ -126,8 +125,8 @@
                 </Grid>
             </ScrollViewer>
             <Grid Background="#80000000"
-  Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}"
-  Panel.ZIndex="100">
+                  Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}"
+                  Panel.ZIndex="100">
 
                 <StackPanel VerticalAlignment="Center"
             HorizontalAlignment="Center">

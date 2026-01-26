@@ -20,7 +20,6 @@ namespace Safety_Wheel.Pages.Teacher
         public TeacherStatisticsPage()
         {
             InitializeComponent();
-            LoadStatistics();
         }
 
         public void LoadStatistics(Models.Student student = null, Test test = null)
@@ -58,9 +57,66 @@ namespace Safety_Wheel.Pages.Teacher
             }
 
             TestsItemsControl.ItemsSource = testStats;
-            DrawOverallTimeChart(allTime);
+            DrawTimeTypeCharts(student, testsToProcess);
         }
 
+        private void DrawTimeTypeCharts(Models.Student student, IEnumerable<Test> tests)
+        {
+            var typeData = new[]
+            {
+                 new { Type = 1, Name = "Без спешки", Plot = TimeType1Plot, Text = TimeType1Text, Time = 60 },
+                 new { Type = 2, Name = "На время", Plot = TimeType2Plot, Text = TimeType2Text, Time = 20 },
+                 new { Type = 3, Name = "Экзамен", Plot = TimeType3Plot, Text = TimeType3Text, Time = 20 }
+            };
+
+            foreach (var td in typeData)
+            {
+                var plot = td.Plot;
+                plot.Plot.Clear();
+
+                double avgTime = 0;
+                int count = 0;
+
+                foreach (var test in tests)
+                {
+                    var attempts = student == null
+                        ? _attemptService.GetAttemptsByTest(test.Id)
+                            .Where(a => a.TestType == td.Type)
+                            .Where(a => a.StartedAt.HasValue && a.FinishedAt.HasValue)
+                        : _attemptService.GetAttemptsByTest(test.Id)
+                            .Where(a => a.StudentsId == student.Id)
+                            .Where(a => a.TestType == td.Type)
+                            .Where(a => a.StartedAt.HasValue && a.FinishedAt.HasValue);
+
+                    foreach (var a in attempts)
+                    {
+                        avgTime += (a.FinishedAt.Value - a.StartedAt.Value).TotalMinutes;
+                        count++;
+                    }
+                }
+
+                double actualAvg = count > 0 ? Math.Round(avgTime / count, 2) : 0;
+                double rest = Math.Max(0, td.Time - actualAvg);
+
+                var pie = plot.Plot.Add.Pie(new double[] { actualAvg, rest });
+                pie.ExplodeFraction = 0.05;
+                pie.DonutFraction = 0.8;
+
+                pie.Slices[0].FillColor = ScottPlot.Color.FromHex("#3498db");
+                pie.Slices[1].FillColor = ScottPlot.Color.FromHex("#ecf0f1");
+                pie.Slices[0].Label = "";
+                pie.Slices[1].Label = "";
+
+                plot.Plot.Axes.SetLimits(-1.2, 1.2, -1.2, 1.2);
+                plot.Plot.Axes.Frameless();
+                plot.Plot.HideGrid();
+                plot.UserInputProcessor.Disable();
+
+                td.Text.Text = $"{td.Name}.\nВ среднем {actualAvg:F1}\nиз {td.Time} мин";
+
+                plot.Refresh();
+            }
+        }
 
         private TestStats GetTestStatsOverall(Test test)
         {
@@ -78,7 +134,6 @@ namespace Safety_Wheel.Pages.Teacher
                     EmptyMessage = $"Тест «{test.Name}» ещё никто не проходил"
                 };
             }
-
 
             var durations = attempts
                 .Select(a => (a.FinishedAt.Value - a.StartedAt.Value).TotalMinutes)
@@ -111,7 +166,6 @@ namespace Safety_Wheel.Pages.Teacher
             return stats;
         }
 
-
         private TestStats GetTestStats(Test test, Models.Student student)
         {
             var attempts = _attemptService.GetAttemptsByTest(test.Id)
@@ -129,7 +183,6 @@ namespace Safety_Wheel.Pages.Teacher
                     EmptyMessage = $"Студент не проходил тест «{test.Subject.Name} {test.Name}»"
                 };
             }
-
 
             var stats = new TestStats
             {
@@ -165,46 +218,13 @@ namespace Safety_Wheel.Pages.Teacher
             return stats;
         }
 
-        private void DrawOverallTimeChart(List<OverallTimeData> data)
-        {
-            OverallTimePlot.Plot.Clear();
-
-            if (!data.Any())
-                return;
-
-            var x = Enumerable.Range(0, data.Count).Select(i => (double)i).ToArray();
-            var y = data.Select(d => d.AverageDuration).ToArray();
-            var labels = data.Select(d => d.TestName).ToArray();
-
-            OverallTimePlot.Plot.Add.Bars(x, y);
-
-            OverallTimePlot.Plot.Axes.Bottom.SetTicks(x, labels);
-            OverallTimePlot.Plot.Axes.Bottom.TickLabelStyle.Rotation = 45;
-
-            double maxY = y.Max();
-            double yPadding = Math.Max(1, maxY * 0.1);
-
-            OverallTimePlot.Plot.Axes.SetLimits(
-                -0.5,
-                x.Length - 0.5,
-                0,
-                maxY + yPadding
-            );
-
-            OverallTimePlot.Plot.Title("Среднее время выполнения тестов");
-            OverallTimePlot.Plot.YLabel("Минуты");
-
-            OverallTimePlot.Refresh();
-
-        }
-
         private void PerformancePlot_Loaded(object sender, RoutedEventArgs e)
         {
             if (sender is not WpfPlot plot)
                 return;
 
             plot.Plot.Clear();
-
+            plot.UserInputProcessor.Disable();
             if (plot.DataContext is not TestStats stats)
             {
                 plot.Plot.Title("Нет данных");
@@ -218,8 +238,6 @@ namespace Safety_Wheel.Pages.Teacher
                 plot.Refresh();
                 return;
             }
-
-           
 
             plot.Plot.Title("Динамика успеваемости");
             plot.Plot.XLabel("Номер вопроса");
@@ -237,8 +255,13 @@ namespace Safety_Wheel.Pages.Teacher
                 stats.SuccessRates.ToArray()
             );
 
-            double minX = stats.QuestionNumbers.Min() - 0.5;
-            double maxX = stats.QuestionNumbers.Max() + 0.5;
+            double minX = stats.QuestionNumbers.Min() - 1;
+            double maxX = stats.QuestionNumbers.Max() + 1;
+
+            plot.Plot.Axes.Bottom.SetTicks(
+                stats.QuestionNumbers.ToArray(),
+                stats.QuestionNumbers.Select(n => n.ToString("F0")).ToArray()
+            );
 
             plot.Plot.Axes.SetLimits(
                 minX,
@@ -246,7 +269,7 @@ namespace Safety_Wheel.Pages.Teacher
                 0,
                 100
             );
-
+            
             plot.Refresh();
         }
 
@@ -269,16 +292,12 @@ namespace Safety_Wheel.Pages.Teacher
     {
         public int TestId { get; set; }
         public string TestName { get; set; }
-
         public double AverageDuration { get; set; }
-
         public bool HasData { get; set; } = true;
         public string EmptyMessage { get; set; }
-
         public List<double> QuestionNumbers { get; set; } = new();
         public List<double> SuccessRates { get; set; } = new();
     }
-
 
     public class OverallTimeData
     {

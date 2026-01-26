@@ -27,44 +27,19 @@ namespace Safety_Wheel.Pages.Teacher
     /// </summary>
     public partial class TeacherMainPage : Page
     {
-        public Frame InnerFrame => this.FrameTeacher;
-
-        public static Frame GlobalInnerFrame = new();
-
+        public static Frame GlobalFrame = new();
         public enum ViewTypes
         {
             Open,
             Search
         }
 
-        public ViewTypes ViewType { get; set; }
-
-        private string _Title = string.Empty;
-
-        public string Title
-        {
-            get { return _Title; }
-            set { _Title = value; }
-        }
-        int _menuItemsCount;
         public TeacherMainPage(int menuItemsCount = 0)
         {
             StudTest._isTestActivated = false;
-            _menuItemsCount = menuItemsCount;
             InitializeComponent();
-            GlobalInnerFrame = FrameTeacher;
+            GlobalFrame = FrameTeacher;
         }
-
-        //private void DatesMenuControl_ItemInvoked(object sender, MahApps.Metro.Controls.HamburgerMenuItemInvokedEventArgs e)
-        //{
-        //    if (DatesMenuControl.IsPaneOpen)
-        //    {
-        //        var anim = new DoubleAnimation(48, TimeSpan.FromMilliseconds(250));
-        //        DatesMenuControl.BeginAnimation(MahApps.Metro.Controls.HamburgerMenu.CompactPaneLengthProperty, anim);
-        //        DatesMenuControl.IsPaneOpen = false;
-        //        DatesMenuControl.SetCurrentValue(HamburgerMenu.SelectedIndexProperty, -1);
-        //    }
-        //}
 
         private void DataGridRow_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -81,7 +56,6 @@ namespace Safety_Wheel.Pages.Teacher
                 DataContext = mw.VM;
             }
         }
-
 
         private void HamburgerMenu_ItemInvoked(object sender, HamburgerMenuItemInvokedEventArgs e)
         {

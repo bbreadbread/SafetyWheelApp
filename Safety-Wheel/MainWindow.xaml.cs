@@ -4,6 +4,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using MahApps.Metro.Controls;
+using MahApps.Metro.Converters;
+using Microsoft.IdentityModel.Tokens;
 using Safety_Wheel.Models;
 using Safety_Wheel.Pages.Student;
 using Safety_Wheel.Pages.Teacher;
@@ -131,7 +133,7 @@ namespace Safety_Wheel
             StudentLoginRule.OriginalLogin = null;
             TeacherLoginRule.OriginalLogin = CurrentUser.Login;
 
-            ReloadStudents();       
+            ReloadStudents();
             LoadTeacherData();
         }
 
@@ -151,6 +153,9 @@ namespace Safety_Wheel
             if (!ValidatePanel(StudentInputsPanel))
                 return;
 
+            if (String.IsNullOrEmpty(PasswordTextBox.Text) || String.IsNullOrEmpty(LoginTextBox.Text) || String.IsNullOrEmpty(NameTextBox.Text))
+                return;
+
             var student = new Student
             {
                 Name = VM.StudentName,
@@ -163,9 +168,6 @@ namespace Safety_Wheel
             ClearInputs();
             ReloadStudents();
         }
-
-
-
         private void SaveStudent_Click(object sender, RoutedEventArgs e)
         {
             if (_selectedStudent == null) return;

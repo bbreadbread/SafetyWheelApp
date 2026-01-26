@@ -1,6 +1,6 @@
 ﻿using Microsoft.Win32;
 using Safety_Wheel.Models;
-using Safety_Wheel.ViewModels;
+using Safety_Wheel.ViewModels.CreateTestsVM;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -25,11 +25,24 @@ namespace Safety_Wheel.Pages.Teacher
             {
                 OpenFileDialog dlg = new OpenFileDialog
                 {
-                    Filter = "Images|*.png;*.jpg;*.jpeg;*.bmp"
+                    Filter = "Images|*.png;*.jpg;*.jpeg;*.bmp",
+                    InitialDirectory = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images")
                 };
 
                 if (dlg.ShowDialog() == true)
-                    qvm.SetQuestionImage(dlg.FileName);
+                {
+                    string imagesPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images");
+                    if (!dlg.FileName.StartsWith(imagesPath, StringComparison.OrdinalIgnoreCase))
+                    {
+                        MessageBox.Show("Изображение должно находиться в папке Images проекта.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+
+                    string relativePath = dlg.FileName.Substring(imagesPath.Length + 1);
+                    relativePath = relativePath.Replace('\\', '/');
+
+                    qvm.SetQuestionImage("Images/" + relativePath);
+                }
             }
         }
 
@@ -39,11 +52,24 @@ namespace Safety_Wheel.Pages.Teacher
             {
                 OpenFileDialog dlg = new OpenFileDialog
                 {
-                    Filter = "Images|*.png;*.jpg;*.jpeg;*.bmp"
+                    Filter = "Images|*.png;*.jpg;*.jpeg;*.bmp",
+                    InitialDirectory = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images")
                 };
 
                 if (dlg.ShowDialog() == true)
-                    ovm.SetOptionImage(dlg.FileName);
+                {
+                    string imagesPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images");
+                    if (!dlg.FileName.StartsWith(imagesPath, StringComparison.OrdinalIgnoreCase))
+                    {
+                        MessageBox.Show("Изображение должно находиться в папке Images проекта.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+
+                    string relativePath = dlg.FileName.Substring(imagesPath.Length + 1);
+                    relativePath = relativePath.Replace('\\', '/');
+
+                    ovm.SetOptionImage("Images/" + relativePath);
+                }
             }
         }
 

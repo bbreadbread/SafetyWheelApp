@@ -1,6 +1,6 @@
 ﻿using Safety_Wheel.Models;
 using Safety_Wheel.Services;
-using Safety_Wheel.ViewModels;
+using Safety_Wheel.ViewModels.CreateTestsVM;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +27,7 @@ namespace Safety_Wheel.Pages.Teacher
         public TeacherAllTests(Subject subject = null)
         {
             _subject = subject;
+            DataContext = new TeacherAllTestViewModel(_subject);
             InitializeComponent();
         }
         private void RemoveTest_Click(object sender, RoutedEventArgs e)
@@ -53,7 +54,7 @@ namespace Safety_Wheel.Pages.Teacher
 
             if (vm.IsCreateCard)
             {
-                TeacherMainPage.GlobalInnerFrame
+                TeacherMainPage.GlobalFrame
                     ?.Navigate(new TeacherCreateTestsPage(null));
                 return;
             }
@@ -65,15 +66,10 @@ namespace Safety_Wheel.Pages.Teacher
 
             await Dispatcher.InvokeAsync(() => { }, System.Windows.Threading.DispatcherPriority.Render);
 
-            TeacherMainPage.GlobalInnerFrame
+            TeacherMainPage.GlobalFrame
                 ?.Navigate(new TeacherCreateTestsPage(vm.Test));
 
             dm.IsLoading = false;
-        }
-
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            DataContext = new TeacherAllTestViewModel(_subject);
         }
     }
 }
