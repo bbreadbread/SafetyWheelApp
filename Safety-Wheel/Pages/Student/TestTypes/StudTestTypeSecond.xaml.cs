@@ -95,16 +95,16 @@ namespace Safety_Wheel.Pages.Student.TestTypes
                                       new SolidColorBrush(Color.FromRgb(0, 0, 139)), 2);
 
                         var opt = _question.Options.First(o => o.Number == num);
-                        _studentAnswersListTypeSecond.Add(new StudentAnswer
-                        {
-                            QuestionId = _question.Id,
-                            OptionId = opt.Id,
-                            IsCorrect = opt.IsCorrect,
-                            AnsweredAt = DateTime.Now,
-                            Attempt = _attempt,
-                            Option = opt,
-                            Question = _question
-                        });
+                        //_studentAnswersListTypeSecond.Add(new StudentAnswer
+                        //{
+                        //    QuestionId = _question.Id,
+                        //    OptionId = opt.Id,
+                        //    IsCorrect = opt.IsCorrect,
+                        //    AnsweredAt = DateTime.Now,
+                        //    Attempt = _attempt,
+                        //    Option = opt,
+                        //    Question = _question
+                        //});
                     }
 
                     img.IsEnabled = false;

@@ -264,6 +264,7 @@ namespace Safety_Wheel.Pages.Student.TestTypes
 
                                 var newAnswer = new StudentAnswer
                                 {
+                                    AttemptId = _attempt.Id,
                                     QuestionId = _question.Id,
                                     OptionId = optionId,
                                     IsCorrect = selectedOption.IsCorrect,
